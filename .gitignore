@@ -1,2 +1,66 @@
-/app/nbproject/private/
-/app/build/
+# ==========================================
+# Sistema Operativo
+# ==========================================
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# ==========================================
+# Java y Compilación
+# ==========================================
+*.class
+*.log
+*.jar
+*.war
+*.ear
+
+# Directorios de compilación y salida
+target/
+build/
+bin/
+out/
+
+# ==========================================
+# Entornos de Desarrollo (IDEs)
+# ==========================================
+# NetBeans
+nbproject/private/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+
+# Eclipse / Spring Tool Suite
+.classpath
+.project
+.settings/
+
+# VS Code
+.vscode/
+
+# ==========================================
+# Base de Datos (MariaDB / Docker)
+# ==========================================
+*backup*.sql
+*.sql.gz
+*.bak
+
+mariadb-data/
+db-data/
+data/mysql/
+
+# ==========================================
+# Secretos y Configuración Local
+# ==========================================
+.env
+.env.local
+*secret*.properties
+application-local.properties
