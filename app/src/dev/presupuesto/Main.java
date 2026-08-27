@@ -1,8 +1,11 @@
 package dev.presupuesto;
 
+import dev.presupuesto.frontend.frames.loginFrame;
+import javax.swing.SwingUtilities;
+
 public class Main {
 
     public static void main(String[] args) {
-        System.out.print("Hello world by Fernando Madrid!\n");
+        SwingUtilities.invokeLater(() -> new loginFrame());
     }
 }
