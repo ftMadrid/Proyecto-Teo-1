@@ -1,0 +1,120 @@
+Table usuario [headercolor: #175e7a] {
+	id_usuario varchar(30) [ pk, not null ]
+	nombres varchar(255)
+	apellidos varchar(255)
+	correo varchar(100) [ unique ]
+	fecha_registro timestamp
+	salario_base decimal(20, 2) [ default: 0.00 ]
+	estado varchar(10) [ default: 'Activo' ]
+}
+
+Table presupuesto [headercolor: #175e7a] {
+	id_presupuesto varchar(30) [ pk, not null ]
+	id_usuario varchar(30) [ not null ]
+	nombre_descriptivo varchar(255)
+	anio_inicio integer
+	mes_fin integer
+	total_ingresos decimal(20, 2) [ default: 0.00 ]
+	total_gastos decimal(20, 2) [ default: 0.00 ]
+	total_ahorro decimal(20, 2) [ default: 0.00 ]
+	fecha_creacion timestamp
+	estado_presupuesto varchar(12)
+	mes_inicio integer
+	anio_fin integer
+}
+
+Table categoria [headercolor: #175e7a] {
+	id_categoria varchar(30) [ pk, not null ]
+	nombre varchar(100)
+	descripcion varchar(255)
+	tipo_categoria varchar(12)
+	orden integer
+}
+
+Table subcategoria [headercolor: #175e7a] {
+	id_subcategoria varchar(30) [ pk, not null ]
+	id_categoria varchar(30) [ not null ]
+	nombre varchar(100)
+	descripcion varchar(255)
+	activa boolean [ default: 1 ]
+	es_predeterminada boolean [ default: 0 ]
+}
+
+Table presupuesto_detalle [headercolor: #175e7a] {
+	id_presupuesto_detalle varchar(30) [ pk, not null ]
+	id_presupuesto varchar(30) [ not null ]
+	id_subcategoria varchar(30) [ not null ]
+	monto_mensual decimal(20, 2) [ default: 0.00 ]
+	observaciones_monto varchar(255)
+}
+
+Table obligacion_fija [headercolor: #175e7a] {
+	id_obligacion varchar(30) [ pk, not null ]
+	id_usuario varchar(30) [ not null ]
+	id_subcategoria varchar(30) [ not null ]
+	nombre varchar(255)
+	descripcion varchar(255)
+	monto_mensual decimal(20, 2) [ default: 0.00 ]
+	dia_vencimiento integer
+	es_vigente boolean [ default: 1 ]
+	fecha_inicio timestamp
+	fecha_finalizacion timestamp
+}
+
+Table transaccion [headercolor: #175e7a] {
+	id_transaccion varchar(30) [ pk, not null ]
+	id_usuario varchar(30)
+	id_presupuesto varchar(30)
+	anio integer
+	mes integer
+	id_subcategoria varchar(30)
+	id_obligacion varchar(30)
+	tipo_transaccion varchar(50)
+	descripcion varchar(255)
+	monto decimal(20, 2) [ default: 0.00 ]
+	fecha timestamp
+	metodo_pago varchar(100)
+	numero_factura varchar(30)
+	observaciones varchar(255)
+	fecha_registro timestamp
+}
+
+Ref fk_subcategoria_id_categoria_categoria {
+	subcategoria.id_categoria > categoria.id_categoria [ delete: no action, update: no action ]
+}
+
+Ref fk_presupuesto_id_usuario_usuario {
+	presupuesto.id_usuario > usuario.id_usuario [ delete: no action, update: no action ]
+}
+
+Ref fk_presupuesto_detalle_id_presupuesto_presupuesto {
+	presupuesto_detalle.id_presupuesto > presupuesto.id_presupuesto [ delete: no action, update: no action ]
+}
+
+Ref fk_presupuesto_detalle_id_subcategoria_subcategoria {
+	presupuesto_detalle.id_subcategoria < subcategoria.id_subcategoria [ delete: no action, update: no action ]
+}
+
+Ref fk_obligacion_fija_id_usuario_usuario {
+	obligacion_fija.id_usuario > usuario.id_usuario [ delete: no action, update: no action ]
+}
+
+Ref fk_obligacion_fija_id_subcategoria_subcategoria {
+	obligacion_fija.id_subcategoria > subcategoria.id_subcategoria [ delete: no action, update: no action ]
+}
+
+Ref fk_transaccion_id_usuario_usuario {
+	transaccion.id_usuario > usuario.id_usuario [ delete: no action, update: no action ]
+}
+
+Ref fk_transaccion_id_presupuesto_presupuesto {
+	transaccion.id_presupuesto > presupuesto.id_presupuesto [ delete: no action, update: no action ]
+}
+
+Ref fk_transaccion_id_subcategoria_subcategoria {
+	transaccion.id_subcategoria > subcategoria.id_subcategoria [ delete: no action, update: no action ]
+}
+
+Ref fk_transaccion_id_obligacion_obligacion_fija {
+	transaccion.id_obligacion > obligacion_fija.id_obligacion [ delete: no action, update: no action ]
+}
