@@ -10,4 +10,11 @@
         <maven.compiler.release>25</maven.compiler.release>
         <exec.mainClass>dev.presupuesto.app.App</exec.mainClass>
     </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+            <version>3.3.3</version>
+        </dependency>
+    </dependencies>
 </project>
