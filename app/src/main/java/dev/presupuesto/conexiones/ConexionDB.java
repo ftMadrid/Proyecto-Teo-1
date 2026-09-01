@@ -21,16 +21,4 @@ public class ConexionDB {
         }
         return conexion;
     }
-
-    public static void main(String[] args) {
-        Connection conn = obtenerConexion();
-        if (conn != null) {
-            try {
-                conn.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-    
 }
