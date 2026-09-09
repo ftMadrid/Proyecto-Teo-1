@@ -18,7 +18,7 @@ BEGIN
         p_nombre,
         p_descripcion,
         p_tipo_categoria,
-        p_orden,
+        p_orden
     );
 END $$
 DELIMITER ;
