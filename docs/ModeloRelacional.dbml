@@ -6,6 +6,10 @@ Table usuario [headercolor: #175e7a] {
 	fecha_registro timestamp
 	salario_base decimal(20, 2) [ default: 0.00 ]
 	estado varchar(10) [ default: 'Activo' ]
+	creado_por varchar(30)
+	modificado_por varchar(30)
+	creado_en timestamp [ default: CURRENT_TIMESTAMP ]
+	modificado_en timestamp [ default: NULL ]
 }
 
 Table presupuesto [headercolor: #175e7a] {
@@ -21,6 +25,10 @@ Table presupuesto [headercolor: #175e7a] {
 	estado_presupuesto varchar(12)
 	mes_inicio integer
 	anio_fin integer
+	creado_por varchar(30)
+	modificado_por varchar(30)
+	creado_en timestamp [ default: CURRENT_TIMESTAMP ]
+	modificado_en timestamp [ default: NULL ]
 }
 
 Table categoria [headercolor: #175e7a] {
@@ -29,6 +37,10 @@ Table categoria [headercolor: #175e7a] {
 	descripcion varchar(255)
 	tipo_categoria varchar(12)
 	orden integer
+	creado_por varchar(30)
+	modificado_por varchar(30)
+	creado_en timestamp [ default: CURRENT_TIMESTAMP ]
+	modificado_en timestamp [ default: NULL ]
 }
 
 Table subcategoria [headercolor: #175e7a] {
@@ -38,6 +50,10 @@ Table subcategoria [headercolor: #175e7a] {
 	descripcion varchar(255)
 	activa boolean [ default: 1 ]
 	es_predeterminada boolean [ default: 0 ]
+	creado_por varchar(30)
+	modificado_por varchar(255)
+	creado_en timestamp [ default: CURRENT_TIMESTAMP ]
+	modificado_en timestamp [ default: NULL ]
 }
 
 Table presupuesto_detalle [headercolor: #175e7a] {
@@ -46,6 +62,10 @@ Table presupuesto_detalle [headercolor: #175e7a] {
 	id_subcategoria varchar(30) [ not null ]
 	monto_mensual decimal(20, 2) [ default: 0.00 ]
 	observaciones_monto varchar(255)
+	creado_por varchar(30)
+	modificado_por varchar(30)
+	creado_en timestamp [ default: CURRENT_TIMESTAMP ]
+	modificado_en timestamp [ default: NULL ]
 }
 
 Table obligacion_fija [headercolor: #175e7a] {
@@ -59,6 +79,10 @@ Table obligacion_fija [headercolor: #175e7a] {
 	es_vigente boolean [ default: 1 ]
 	fecha_inicio timestamp
 	fecha_finalizacion timestamp
+	creado_por varchar(30)
+	modificado_por varchar(30)
+	creado_en timestamp [ default: CURRENT_TIMESTAMP ]
+	modificado_en timestamp [ default: NULL ]
 }
 
 Table transaccion [headercolor: #175e7a] {
@@ -77,6 +101,10 @@ Table transaccion [headercolor: #175e7a] {
 	numero_factura varchar(30)
 	observaciones varchar(255)
 	fecha_registro timestamp
+	creado_por varchar(30)
+	modificado_por varchar(30)
+	creado_en timestamp [ default: CURRENT_TIMESTAMP ]
+	modificado_en timestamp [ default: NULL ]
 }
 
 Ref fk_subcategoria_id_categoria_categoria {
