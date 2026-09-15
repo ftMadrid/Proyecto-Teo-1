@@ -4,21 +4,24 @@ CREATE OR REPLACE PROCEDURE sp_insertar_categoria (
     IN p_nombre VARCHAR(100),
     IN p_descripcion VARCHAR(255),
     IN p_tipo_categoria VARCHAR(12),
-    IN p_orden INT
+    IN p_orden INT,
+    IN p_creado_por VARCHAR(30)
 )
 BEGIN
-    INSERT INTO usuario (
+    INSERT INTO categoria (
         id_categoria,
         nombre,
         descripcion,
         tipo_categoria,
-        orden
-    )VALUES (
+        orden,
+        creado_por
+    ) VALUES (
         p_id_categoria,
         p_nombre,
         p_descripcion,
         p_tipo_categoria,
-        p_orden
+        p_orden,
+        p_creado_por
     );
 END $$
 DELIMITER ;
@@ -29,28 +32,16 @@ CREATE OR REPLACE PROCEDURE sp_actualizar_categoria (
     IN p_nombre VARCHAR(100),
     IN p_descripcion VARCHAR(255),
     IN p_tipo_categoria VARCHAR(12),
-    IN p_orden INT
+    IN p_orden INT,
+    IN p_modificado_por VARCHAR(30)
 )
 BEGIN
     UPDATE categoria
     SET nombre = p_nombre,
         descripcion = p_descripcion,
         tipo_categoria = p_tipo_categoria,
-        orden = p_orden
-    WHERE id_categoria = p_id_categoria;
-END $$
-DELIMITER ;
-
-DELIMITER $$
-CREATE OR REPLACE PROCEDURE sp_actualizar_categoria (
-    IN p_id_categoria VARCHAR(30),
-    IN p_nombre VARCHAR(100),
-    IN p_descripcion VARCHAR(255)
-)
-BEGIN
-    UPDATE categoria
-    SET nombre = p_nombre,
-        descripcion = p_descripcion
+        orden = p_orden,
+        modificado_por = p_modificado_por
     WHERE id_categoria = p_id_categoria;
 END $$
 DELIMITER ;

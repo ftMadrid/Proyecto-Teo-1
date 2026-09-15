@@ -4,7 +4,8 @@ CREATE OR REPLACE PROCEDURE sp_insertar_presupuesto_detalle(
     IN p_id_presupuesto VARCHAR(30),
     IN p_id_subcategoria VARCHAR(30),
     IN p_monto_mensual DECIMAL(20,2),
-    IN p_observaciones_monto VARCHAR(255)
+    IN p_observaciones_monto VARCHAR(255),
+    IN p_creado_por VARCHAR(30)
 )
 BEGIN
     INSERT INTO presupuesto_detalle(
@@ -12,13 +13,15 @@ BEGIN
         id_presupuesto,
         id_subcategoria,
         monto_mensual,
-        observaciones_monto
+        observaciones_monto,
+        creado_por
     )VALUES (
         p_id_presupuesto_detalle,
         p_id_presupuesto,
         p_id_subcategoria,
         p_monto_mensual,
-        p_observaciones_monto
+        p_observaciones_monto,
+        p_creado_por
     );
 END $$
 DELIMITER ;
@@ -27,12 +30,14 @@ DELIMITER $$
 CREATE OR REPLACE PROCEDURE sp_actualizar_presupuesto_detalle(
     IN p_id_presupuesto_detalle VARCHAR(30),
     IN p_monto_mensual DECIMAL(20,2),
-    IN p_observaciones_monto VARCHAR(255)
+    IN p_observaciones_monto VARCHAR(255),
+    IN p_modificado_por VARCHAR(30)
 )
 BEGIN
     UPDATE presupuesto_detalle
     SET monto_mensual = p_monto_mensual,
-        observaciones_monto = p_observaciones_monto
+        observaciones_monto = p_observaciones_monto,
+        modificado_por = p_modificado_por
     WHERE id_presupuesto_detalle = p_id_presupuesto_detalle;
 END $$
 DELIMITER ;

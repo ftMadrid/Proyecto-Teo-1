@@ -13,7 +13,8 @@ CREATE OR REPLACE PROCEDURE sp_insertar_transaccion(
     IN p_fecha TIMESTAMP,
     IN p_metodo_pago VARCHAR(100),
     IN p_numero_factura VARCHAR(30),
-    IN p_observaciones VARCHAR(255)
+    IN p_observaciones VARCHAR(255),
+    IN p_creado_por VARCHAR(30)
 )
 BEGIN
     INSERT INTO transaccion(
@@ -31,7 +32,8 @@ BEGIN
         metodo_pago,
         numero_factura,
         observaciones,
-        fecha_registro
+        fecha_registro,
+        creado_por
     )VALUES (
         p_id_transaccion,
         p_id_usuario,
@@ -47,7 +49,8 @@ BEGIN
         p_metodo_pago,
         p_numero_factura,
         p_observaciones,
-        CURRENT_TIMESTAMP
+        CURRENT_TIMESTAMP,
+        p_creado_por
     );
 END $$
 DELIMITER ;
@@ -62,7 +65,8 @@ CREATE OR REPLACE PROCEDURE sp_actualizar_transaccion(
     IN p_fecha TIMESTAMP,
     IN p_metodo_pago VARCHAR(100),
     IN p_numero_factura VARCHAR(30),
-    IN p_observaciones VARCHAR(255)
+    IN p_observaciones VARCHAR(255),
+    IN p_modificado_por VARCHAR(30)
 )
 BEGIN
     UPDATE transaccion
@@ -73,7 +77,8 @@ BEGIN
         fecha = p_fecha,
         metodo_pago = p_metodo_pago,
         numero_factura = p_numero_factura,
-        observaciones = p_observaciones
+        observaciones = p_observaciones,
+        modificado_por = p_modificado_por
     WHERE id_transaccion = p_id_transaccion;
 END $$
 DELIMITER ;

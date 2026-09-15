@@ -7,20 +7,21 @@ import java.util.ArrayList;
 
 import dev.presupuesto.conexiones.ConexionDB;
 
-public class CrudUsuario {
-    
-    public boolean insertarUsuario(String id, String nombres, String apellidos, String correo, double salario, String creadoPor){
-        String query = "{CALL sp_insertar_usuario(?, ?, ?, ?, ?, ?)}";
+public class CrudCategoria {
+
+    public boolean insertarCategoria(String idCategoria, String nombre, String descripcion, String tipoCategoria, int orden, String creadoPor){
+        
+        String query = "{CALL sp_insertar_categoria(?, ?, ?, ?, ?, ?)}";
         
         try(Connection con = ConexionDB.obtenerConexion();
             CallableStatement cs = con.prepareCall(query)){
             
-            cs.setString(1, id);
-            cs.setString(2, nombres);
-            cs.setString(3, apellidos);
-            cs.setString(4, correo);
-            cs.setDouble(5, salario);
-            cs.setString(6, creadoPor); 
+            cs.setString(1, idCategoria);
+            cs.setString(2, nombre);
+            cs.setString(3, descripcion);
+            cs.setString(4, tipoCategoria);
+            cs.setInt(5, orden);
+            cs.setString(6, creadoPor);
             cs.execute();
 
             return true;
@@ -30,17 +31,18 @@ public class CrudUsuario {
         }
     }
 
-    public boolean actualizarUsuario(String id, String nombres, String apellidos, String correo, double salario, String modificadoPor){
-        String query = "{CALL sp_actualizar_usuario(?, ?, ?, ?, ?, ?)}";
+    public boolean actualizarCategoria(String idCategoria, String nombre, String descripcion, String tipoCategoria, int orden, String modificadoPor){
+        
+        String query = "{CALL sp_actualizar_categoria(?, ?, ?, ?, ?, ?)}";
         
         try(Connection con = ConexionDB.obtenerConexion();
             CallableStatement cs = con.prepareCall(query)){
             
-            cs.setString(1, id);
-            cs.setString(2, nombres);
-            cs.setString(3, apellidos);
-            cs.setString(4, correo);
-            cs.setDouble(5, salario);
+            cs.setString(1, idCategoria);
+            cs.setString(2, nombre);
+            cs.setString(3, descripcion);
+            cs.setString(4, tipoCategoria);
+            cs.setInt(5, orden);
             cs.setString(6, modificadoPor);
             cs.execute();
 
@@ -51,15 +53,14 @@ public class CrudUsuario {
         }
     }
 
-    public boolean eliminarUsuario(String id, String modificadoPor){
-
-        String query = "{CALL sp_eliminar_usuario(?, ?)}";
+    public boolean eliminarCategoria(String idCategoria){
+        
+        String query = "{CALL sp_eliminar_categoria(?)}";
         
         try(Connection con = ConexionDB.obtenerConexion();
             CallableStatement cs = con.prepareCall(query)){
             
-            cs.setString(1, id);
-            cs.setString(2, modificadoPor); 
+            cs.setString(1, idCategoria);
             cs.execute();
 
             return true;
@@ -69,22 +70,23 @@ public class CrudUsuario {
         }
     }
     
-    public String consultarUsuario(String id){
+    public String consultarCategoria(String idCategoria){
         
-        String query = "{CALL sp_consultar_usuario(?)}";
+        String query = "{CALL sp_consultar_categoria(?)}";
         String resultado = null;
         
         try(Connection con = ConexionDB.obtenerConexion();
             CallableStatement cs = con.prepareCall(query)){
             
-            cs.setString(1, id);
+            cs.setString(1, idCategoria);
             ResultSet rs = cs.executeQuery();
             
             if(rs.next()){
-                resultado = "| ID: " + rs.getString("id_usuario") + 
-                            " | Nombre: " + rs.getString("nombres") + " " + rs.getString("apellidos") + 
-                            " | Correo: " + rs.getString("correo") + 
-                            " | Estado: " + rs.getString("estado");
+                resultado = "| ID-Categoria: " + rs.getString("id_categoria") +
+                            " | Nombre: " + rs.getString("nombre") + 
+                            " | Tipo: " + rs.getString("tipo_categoria") + 
+                            " | Orden: " + rs.getInt("orden") +
+                            " | Desc: " + rs.getString("descripcion");
             }
         }catch(Exception e){
             System.err.println("[ERROR] No se pudo consultar: " + e.getMessage());
@@ -92,24 +94,26 @@ public class CrudUsuario {
         return resultado;
     }
 
-    public ArrayList<String> listarUsuarios(){
-
-        String query = "{CALL sp_listar_usuarios()}";
-        ArrayList<String> listaUsuarios = new ArrayList<>();
+    public ArrayList<String> listarCategorias(String tipoCategoria){
+        
+        String query = "{CALL sp_listar_categoria(?)}";
+        ArrayList<String> lista = new ArrayList<>();
         
         try(Connection con = ConexionDB.obtenerConexion();
             CallableStatement cs = con.prepareCall(query)){
             
+            cs.setString(1, tipoCategoria);
             ResultSet rs = cs.executeQuery();
             
             while(rs.next()){
-                String fila = rs.getString("id_usuario") + " - " + 
-                              rs.getString("nombres") + " " + rs.getString("apellidos") + " (" + rs.getString("estado") + ")";
-                listaUsuarios.add(fila);
+                String fila = rs.getString("id_categoria") + " - " + 
+                              rs.getString("nombre") + " [" + rs.getString("tipo_categoria") + "]";
+                lista.add(fila);
             }
         }catch(Exception e){
             System.err.println("[ERROR] No se pudo listar: " + e.getMessage());
         }
-        return listaUsuarios;
+        return lista;
     }
+    
 }

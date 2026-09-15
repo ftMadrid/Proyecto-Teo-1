@@ -8,7 +8,8 @@ CREATE OR REPLACE PROCEDURE sp_insertar_obligacion(
     IN p_monto_mensual DECIMAL(20,2),
     IN p_dia_vencimiento INT,
     IN p_fecha_inicio TIMESTAMP,
-    IN p_fecha_finalizacion TIMESTAMP
+    IN p_fecha_finalizacion TIMESTAMP,
+    IN p_creado_por VARCHAR(30)
 )
 BEGIN
     INSERT INTO obligacion_fija(
@@ -20,7 +21,8 @@ BEGIN
         monto_mensual,
         dia_vencimiento,
         fecha_inicio,
-        fecha_finalizacion
+        fecha_finalizacion,
+        creado_por
     )VALUES (
         p_id_obligacion,
         p_id_usuario,
@@ -30,7 +32,8 @@ BEGIN
         p_monto_mensual,
         p_dia_vencimiento,
         p_fecha_inicio,
-        p_fecha_finalizacion
+        p_fecha_finalizacion,
+        p_creado_por
     );
 END $$
 DELIMITER ;
@@ -44,7 +47,8 @@ CREATE OR REPLACE PROCEDURE sp_actualizar_obligacion(
     IN p_monto_mensual DECIMAL(20,2),
     IN p_dia_vencimiento INT,
     IN p_fecha_inicio TIMESTAMP,
-    IN p_fecha_finalizacion TIMESTAMP
+    IN p_fecha_finalizacion TIMESTAMP,
+    IN p_modificado_por VARCHAR(30)
 )
 BEGIN
     UPDATE obligacion_fija
@@ -54,18 +58,22 @@ BEGIN
         monto_mensual = p_monto_mensual,
         dia_vencimiento = p_dia_vencimiento,
         fecha_inicio = p_fecha_inicio,
-        fecha_finalizacion = p_fecha_finalizacion
+        fecha_finalizacion = p_fecha_finalizacion,
+        modificado_por = p_modificado_por
     WHERE id_obligacion = p_id_obligacion;
 END $$
 DELIMITER ;
 
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE sp_eliminar_obligacion(
-    IN p_id_obligacion VARCHAR(30)
+    IN p_id_obligacion VARCHAR(30),
+    IN p_modificado_por VARCHAR(30)
 )
 BEGIN
     UPDATE obligacion_fija
-    SET es_vigente = 0 WHERE id_obligacion = p_id_obligacion;
+    SET es_vigente = 0,
+        modificado_por = p_modificado_por
+    WHERE id_obligacion = p_id_obligacion;
 END $$
 DELIMITER ;
 

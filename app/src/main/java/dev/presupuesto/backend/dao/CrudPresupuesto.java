@@ -86,7 +86,7 @@ public class CrudPresupuesto {
             ResultSet rs = cs.executeQuery();
             
             if(rs.next()){
-                resultado = "ID-Presupuesto: " + rs.getString("id_presupuesto") +
+                resultado = "| ID-Presupuesto: " + rs.getString("id_presupuesto") +
                             " | ID Usuario: " + rs.getString("id_usuario") +
                             " | Nombre: " + rs.getString("nombre_descriptivo") + 
                             " | Inicio: " + rs.getInt("mes_inicio") + "/" + rs.getInt("anio_inicio") + 

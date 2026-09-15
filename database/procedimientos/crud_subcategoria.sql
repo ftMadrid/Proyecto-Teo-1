@@ -3,19 +3,22 @@ CREATE OR REPLACE PROCEDURE sp_insertar_subcategoria(
     IN p_id_subcategoria VARCHAR(30),
     IN p_id_categoria VARCHAR(30),
     IN p_nombre VARCHAR(100),
-    IN p_descripcion VARCHAR(255)
+    IN p_descripcion VARCHAR(255),
+    IN p_creado_por VARCHAR(30)
 )
 BEGIN
     INSERT INTO subcategoria(
         id_subcategoria,
         id_categoria,
         nombre,
-        descripcion
+        descripcion,
+        creado_por
     )VALUES (
         p_id_subcategoria,
         p_id_categoria,
         p_nombre,
-        p_descripcion
+        p_descripcion,
+        p_creado_por
     );
 END $$
 DELIMITER ;
@@ -25,13 +28,15 @@ CREATE OR REPLACE PROCEDURE sp_actualizar_subcategoria (
     IN p_id_subcategoria VARCHAR(30),
     IN p_nombre VARCHAR(100),
     IN p_descripcion VARCHAR(255),
-    IN p_activa BOOLEAN
+    IN p_activa BOOLEAN,
+    IN p_modificado_por VARCHAR(30)
 )
 BEGIN
     UPDATE subcategoria
     SET nombre = p_nombre,
         descripcion = p_descripcion,
-        activa = p_activa
+        activa = p_activa,
+        modificado_por = p_modificado_por
     WHERE id_subcategoria = p_id_subcategoria;
 END $$
 DELIMITER ;
@@ -73,7 +78,7 @@ END $$
 DELIMITER ;
 
 DELIMITER $$
-CREATE OR REPLACE PROCEDURE sp_listar_subcategoria (
+CREATE OR REPLACE PROCEDURE sp_listar_subcategorias_por_categoria (
     IN p_id_categoria VARCHAR(30)
 )
 BEGIN
