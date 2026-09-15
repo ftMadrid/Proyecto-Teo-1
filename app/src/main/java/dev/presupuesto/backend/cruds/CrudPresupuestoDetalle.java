@@ -1,4 +1,4 @@
-package dev.presupuesto.backend.dao;
+package dev.presupuesto.backend.cruds;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;

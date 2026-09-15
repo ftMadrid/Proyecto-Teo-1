@@ -4,7 +4,7 @@ RETURNS DECIMAL(20, 2)
 READS SQL DATA
 BEGIN 
     RETURN (
-        SELECT SUM(monto)
+        SELECT COALESCE(SUM(monto), 0.00)
         FROM transaccion
         WHERE id_subcategoria = f_id_subcategoria AND anio = f_anio AND mes = f_mes
     );
