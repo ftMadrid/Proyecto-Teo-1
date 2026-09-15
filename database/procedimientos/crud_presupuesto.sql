@@ -6,7 +6,8 @@ CREATE OR REPLACE PROCEDURE sp_insertar_presupuesto(
     IN p_anio_inicio INT,
     IN p_mes_inicio INT,
     IN p_anio_fin INT,
-    IN p_mes_fin INT
+    IN p_mes_fin INT,
+    IN p_creado_por VARCHAR(30)
 )
 BEGIN
     INSERT INTO presupuesto (
@@ -18,7 +19,8 @@ BEGIN
         anio_fin,
         mes_fin,
         fecha_creacion,
-        estado_presupuesto
+        estado_presupuesto,
+        creado_por
     )VALUES (
         p_id_presupuesto,
         p_id_usuario,
@@ -28,7 +30,8 @@ BEGIN
         p_anio_fin,
         p_mes_fin,
         CURRENT_TIMESTAMP,
-        'ACTIVO'
+        'ACTIVO',
+        p_creado_por
     );
 END $$
 DELIMITER ;
@@ -41,7 +44,8 @@ CREATE OR REPLACE PROCEDURE sp_actualizar_presupuesto(
     IN p_mes_inicio INT,
     IN p_anio_fin INT,
     IN p_mes_fin INT,
-    IN p_estado_presupuesto VARCHAR(12)
+    IN p_estado_presupuesto VARCHAR(12),
+    IN p_modificado_por VARCHAR(30)
 )
 BEGIN
     UPDATE presupuesto
@@ -50,7 +54,8 @@ BEGIN
         mes_inicio = p_mes_inicio,
         anio_fin = p_anio_fin,
         mes_fin = p_mes_fin,
-        estado_presupuesto = p_estado_presupuesto
+        estado_presupuesto = p_estado_presupuesto,
+        modificado_por = p_modificado_por
     WHERE id_presupuesto = p_id_presupuesto;
 END $$
 DELIMITER ;

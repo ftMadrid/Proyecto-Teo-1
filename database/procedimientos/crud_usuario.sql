@@ -4,7 +4,8 @@ CREATE OR REPLACE PROCEDURE sp_insertar_usuario (
     IN p_nombres VARCHAR(255),
     IN p_apellidos VARCHAR(255),
     IN p_correo VARCHAR(100),
-    IN p_salario_base DECIMAL(20, 2)
+    IN p_salario_base DECIMAL(20, 2),
+    IN p_creado_por VARCHAR(30) 
 )
 BEGIN
     INSERT INTO usuario (
@@ -14,15 +15,17 @@ BEGIN
         correo,
         fecha_registro,
         salario_base,
-        estado
-    )VALUES (
+        estado,
+        creado_por
+    ) VALUES (
         p_id_usuario,
         p_nombres,
         p_apellidos,
         p_correo,
-        CURDATE(),
+        CURRENT_TIMESTAMP,
         p_salario_base,
-        'Activo'
+        'Activo',
+        p_creado_por
     );
 END $$
 DELIMITER ;
@@ -33,25 +36,29 @@ CREATE OR REPLACE PROCEDURE sp_actualizar_usuario (
     IN p_nombres VARCHAR(255),
     IN p_apellidos VARCHAR(255),
     IN p_correo VARCHAR(100),
-    IN p_salario_base DECIMAL(20, 2)
+    IN p_salario_base DECIMAL(20, 2),
+    IN p_modificado_por VARCHAR(30)
 )
 BEGIN
     UPDATE usuario
     SET nombres = p_nombres,
         apellidos = p_apellidos,
         correo = p_correo,
-        salario_base = p_salario_base
+        salario_base = p_salario_base,
+        modificado_por = p_modificado_por
     WHERE id_usuario = p_id_usuario;
 END $$
 DELIMITER ;
 
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE sp_eliminar_usuario (
-    IN p_id_usuario VARCHAR(30)
+    IN p_id_usuario VARCHAR(30),
+    IN p_modificado_por VARCHAR(30)
 )
 BEGIN
     UPDATE usuario
-    SET estado = 'Inactivo'
+    SET estado = 'Inactivo',
+        modificado_por = p_modificado_por
     WHERE id_usuario = p_id_usuario;
 END $$
 DELIMITER ;
