@@ -1,66 +1,77 @@
 package dev.presupuesto.frontend.frames;
 
-import dev.presupuesto.conexiones.ConexionDB;
 import javax.swing.*;
 import java.awt.*;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class hubFrame extends JFrame {
     
+    private CardLayout cardLayout;
+    private JPanel panelContenedor;
+    private String nombreCuenta;
+
     public hubFrame(String nombreCuenta) {
+        this.nombreCuenta = nombreCuenta;
         setTitle("Presupuesto Personal");
-        setSize(400, 300); // Le di un poquito mas de alto para que respire el boton
+        setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setLayout(new BorderLayout());
+        setResizable(false);
 
-        JLabel labelBienvenida = new JLabel("Bienvenido \"" + nombreCuenta + "\"", SwingConstants.CENTER);
-        labelBienvenida.setFont(new Font("Arial", Font.BOLD, 24));
-        labelBienvenida.setForeground(new Color(0, 102, 204)); 
-        add(labelBienvenida, BorderLayout.CENTER);
+        cardLayout = new CardLayout();
+        panelContenedor = new JPanel(cardLayout);
 
-        JButton btnVerUsuario = new JButton("Ver mis datos (usr_01)");
+        JPanel panelMenu = crearPanelMenu();
+        usuarioFrame panelUsuario = new usuarioFrame(this);
+
+        panelContenedor.add(panelMenu, "Menu");
+        panelContenedor.add(panelUsuario, "Usuario");
+
+        setContentPane(panelContenedor);
+        setVisible(true);
+    }
+
+    private JPanel crearPanelMenu() {
+        JPanel panel = new JPanel(null);
+        panel.setBackground(new Color(235, 238, 242));
+
+        JLabel labelBienvenida = new JLabel("¡Bienvenido, " + nombreCuenta + "!");
+        labelBienvenida.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        labelBienvenida.setForeground(new Color(40, 40, 40));
+        labelBienvenida.setBounds(40, 40, 600, 40);
+        panel.add(labelBienvenida);
+
+        JButton btnUsuarios = new JButton("Opciones de Usuario");
+        btnUsuarios.setBounds(40, 110, 250, 45);
+        btnUsuarios.setBackground(new Color(0, 110, 255));
+        btnUsuarios.setForeground(Color.WHITE);
+        btnUsuarios.setFont(new Font("Segoe UI", Font.BOLD, 15));
         
-        btnVerUsuario.addActionListener(e -> {
-            String idBuscado = "usr_01";
-            String query = "SELECT * FROM usuario WHERE id_usuario = ?";
+        btnUsuarios.setOpaque(true);
+        btnUsuarios.setContentAreaFilled(true);
+        btnUsuarios.setFocusPainted(false);
+        btnUsuarios.setBorderPainted(false);
+        btnUsuarios.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-            try (Connection conn = ConexionDB.obtenerConexion();
-                 PreparedStatement pstmt = conn.prepareStatement(query)) {
-                
-                pstmt.setString(1, idBuscado);
-                ResultSet rs = pstmt.executeQuery();
-                
-                if (rs.next()) {
-                    String nombres = rs.getString("nombres");
-                    String apellidos = rs.getString("apellidos");
-                    String correo = rs.getString("correo");
-                    java.sql.Date fecha = rs.getDate("fecha_registro");
-                    double salario = rs.getDouble("salario_base");
-                    String estado = rs.getString("estado");
-                    
-                    String mensaje = "ID: " + idBuscado + "\n"
-                                   + "Nombre: " + nombres + " " + apellidos + "\n"
-                                   + "Correo: " + correo + "\n"
-                                   + "Fecha Registro: " + fecha + "\n"
-                                   + "Salario Base: L. " + salario + "\n"
-                                   + "Estado: " + estado;
-                    
-                    JOptionPane.showMessageDialog(this, mensaje, "Datos del Usuario", JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    JOptionPane.showMessageDialog(this, "No se encontró el usuario: " + idBuscado, "Aviso", JOptionPane.WARNING_MESSAGE);
-                }
-                
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Error de base de datos: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        btnUsuarios.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnUsuarios.setBackground(new Color(0, 90, 215));
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnUsuarios.setBackground(new Color(0, 110, 255));
             }
         });
+        
+        btnUsuarios.addActionListener(e -> mostrarPanel("Usuario"));
+        panel.add(btnUsuarios);
 
-        add(btnVerUsuario, BorderLayout.SOUTH);
+        return panel;
+    }
 
-        setVisible(true);
+    public void mostrarPanel(String nombrePanel) {
+        cardLayout.show(panelContenedor, nombrePanel);
     }
 }

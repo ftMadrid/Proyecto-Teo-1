@@ -14,9 +14,8 @@ public class ConexionDB {
         Connection conexion = null;
         try {
             conexion = DriverManager.getConnection(URL, USER, PASSWORD);
-            System.out.println("[LOG] Conexion exitosa a MariaDB.");
         } catch (SQLException e) {
-            System.err.println("[LOG-ERROR] Error al conectar con la base de datos: ");
+            System.err.println("[LOG-ERROR] Error al contactar con la base de datos: ");
             e.printStackTrace();
         }
         return conexion;

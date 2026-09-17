@@ -70,7 +70,6 @@ public class CrudUsuario {
     }
     
     public String consultarUsuario(String id){
-        
         String query = "{CALL sp_consultar_usuario(?)}";
         String resultado = null;
         
@@ -81,10 +80,12 @@ public class CrudUsuario {
             ResultSet rs = cs.executeQuery();
             
             if(rs.next()){
-                resultado = "| ID: " + rs.getString("id_usuario") + 
-                            " | Nombre: " + rs.getString("nombres") + " " + rs.getString("apellidos") + 
-                            " | Correo: " + rs.getString("correo") + 
-                            " | Estado: " + rs.getString("estado");
+                resultado = "| ID: " + rs.getString("id_usuario") + "\n" + 
+                            "| Nombre: " + rs.getString("nombres") + " " + rs.getString("apellidos") + "\n" + 
+                            "| Correo: " + rs.getString("correo") + "\n" + 
+                            "| Fecha de Registro: " + rs.getDate("fecha_registro") + "\n" + 
+                            "| Salario Base: L." + rs.getDouble("salario_base") + "\n" + 
+                            "| Estado Actual: " + rs.getString("estado");
             }
         }catch(Exception e){
             System.err.println("[ERROR] No se pudo consultar: " + e.getMessage());
@@ -93,7 +94,7 @@ public class CrudUsuario {
     }
 
     public ArrayList<String> listarUsuarios(){
-
+        
         String query = "{CALL sp_listar_usuarios()}";
         ArrayList<String> listaUsuarios = new ArrayList<>();
         
@@ -103,8 +104,13 @@ public class CrudUsuario {
             ResultSet rs = cs.executeQuery();
             
             while(rs.next()){
-                String fila = rs.getString("id_usuario") + " - " + 
-                              rs.getString("nombres") + " " + rs.getString("apellidos") + " (" + rs.getString("estado") + ")";
+                String fila = rs.getString("id_usuario") + "," + 
+                              rs.getString("nombres") + "," + 
+                              rs.getString("apellidos") + "," + 
+                              rs.getString("correo") + "," + 
+                              rs.getDate("fecha_registro") + "," + 
+                              rs.getDouble("salario_base") + "," + 
+                              rs.getString("estado");
                 listaUsuarios.add(fila);
             }
         }catch(Exception e){
