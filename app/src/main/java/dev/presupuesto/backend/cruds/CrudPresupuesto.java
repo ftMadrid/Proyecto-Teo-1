@@ -100,18 +100,25 @@ public class CrudPresupuesto {
     }
 
     public ArrayList<String> listarPresupuestosUsuario(String idUsuario){
-        String query = "{CALL sp_listar_presupuestos_usuario(?)}";
+        String query = "{CALL sp_listar_presupuestos_usuario(?, ?)}";
         ArrayList<String> lista = new ArrayList<>();
         
         try(Connection con = ConexionDB.obtenerConexion();
             CallableStatement cs = con.prepareCall(query)){
             
             cs.setString(1, idUsuario);
+            cs.setString(2, "");
             ResultSet rs = cs.executeQuery();
             
             while(rs.next()){
-                String fila = rs.getString("id_presupuesto") + " - " + 
-                              rs.getString("nombre_descriptivo") + " (" + rs.getString("estado_presupuesto") + ")";
+                String fila = rs.getString("id_presupuesto") + "," + 
+                              rs.getString("id_usuario") + "," + 
+                              rs.getString("nombre_descriptivo") + "," + 
+                              rs.getInt("anio_inicio") + "," + 
+                              rs.getInt("mes_inicio") + "," + 
+                              rs.getInt("anio_fin") + "," + 
+                              rs.getInt("mes_fin") + "," + 
+                              rs.getString("estado_presupuesto");
                 lista.add(fila);
             }
         }catch(Exception e){

@@ -14,7 +14,6 @@ public class loginFrame extends JFrame {
         setLocationRelativeTo(null);
         setResizable(false); 
 
-        // --- PALETA DE COLORES (Light Theme) ---
         Color fondoPrincipal = new Color(235, 238, 242); 
         Color fondoTarjeta = new Color(255, 255, 255);   
         Color colorTextoPrimario = new Color(40, 40, 40); 
@@ -24,13 +23,11 @@ public class loginFrame extends JFrame {
         Color colorBoton = new Color(0, 110, 255); 
         Color colorBotonHover = new Color(0, 90, 215); 
 
-        // Panel principal
         JPanel panelFondo = new JPanel();
         panelFondo.setBackground(fondoPrincipal);
         panelFondo.setLayout(null); 
         setContentPane(panelFondo);
 
-        // Tarjeta central
         JPanel tarjeta = new JPanel();
         tarjeta.setBackground(fondoTarjeta);
         tarjeta.setBounds(60, 45, 345, 400); 
@@ -39,7 +36,6 @@ public class loginFrame extends JFrame {
         tarjeta.setBorder(BorderFactory.createLineBorder(new Color(220, 225, 230), 1));
         panelFondo.add(tarjeta);
 
-        // --- TEXTOS ---
         JLabel titulo = new JLabel("Bienvenido");
         titulo.setFont(new Font("Segoe UI", Font.BOLD, 26));
         titulo.setForeground(colorTextoPrimario);
@@ -52,7 +48,6 @@ public class loginFrame extends JFrame {
         subtitulo.setBounds(40, 75, 265, 20);
         tarjeta.add(subtitulo);
 
-        // --- CAMPOS DE TEXTO ---
         JLabel labelUsuario = new JLabel("USUARIO");
         labelUsuario.setFont(new Font("Segoe UI", Font.BOLD, 11));
         labelUsuario.setForeground(colorTextoSecundario);
@@ -89,7 +84,6 @@ public class loginFrame extends JFrame {
         ));
         tarjeta.add(campoContrasena);
 
-        // --- BOTON ---
         JButton botonLogin = new JButton("Ingresar");
         botonLogin.setBounds(40, 320, 265, 45);
         botonLogin.setBackground(colorBoton);
@@ -115,7 +109,6 @@ public class loginFrame extends JFrame {
         });
         tarjeta.add(botonLogin);
 
-        // --- ACCIoN DEL LOGIN ---
         botonLogin.addActionListener(e -> {
             String usuario = campoUsuario.getText();
             String contrasena = new String(campoContrasena.getPassword());

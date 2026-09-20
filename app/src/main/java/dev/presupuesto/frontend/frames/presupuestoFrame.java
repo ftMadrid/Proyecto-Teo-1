@@ -1,6 +1,6 @@
 package dev.presupuesto.frontend.frames;
 
-import dev.presupuesto.backend.cruds.CrudUsuario;
+import dev.presupuesto.backend.cruds.CrudPresupuesto;
 import dev.presupuesto.frontend.utils.Estilo;
 
 import javax.swing.*;
@@ -10,10 +10,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.Locale;
 import java.util.Map;
 
-public class usuarioFrame extends JPanel {
+public class presupuestoFrame extends JPanel {
 
     private static final String TAB_CONSULTAR = "Consultar";
     private static final String TAB_LISTAR = "Listar";
@@ -21,7 +20,7 @@ public class usuarioFrame extends JPanel {
     private static final String TAB_ACTUALIZAR = "Actualizar";
     private static final String TAB_ELIMINAR = "Eliminar";
 
-    private CrudUsuario crud = new CrudUsuario();
+    private CrudPresupuesto crud = new CrudPresupuesto();
     private hubFrame ventanaPrincipal;
 
     private CardLayout cardTabs;
@@ -32,24 +31,27 @@ public class usuarioFrame extends JPanel {
     private JTextField txtIdConsultar;
     private JTextArea areaConsultar;
 
+    private JTextField txtIdUsuarioListar;
     private DefaultTableModel modeloListar;
     private JTable tablaListar;
 
-    private JTextField txtIdInsertar, txtNombresInsertar, txtApellidosInsertar, txtCorreoInsertar, txtSalarioInsertar;
+    private JTextField txtIdPresupuestoInsertar, txtIdUsuarioInsertar, txtNombreInsertar;
+    private JTextField txtAnioInicioInsertar, txtMesInicioInsertar, txtAnioFinInsertar, txtMesFinInsertar;
 
-    private JTextField txtIdActualizar, txtNombresActualizar, txtApellidosActualizar, txtCorreoActualizar, txtSalarioActualizar;
+    private JTextField txtIdPresupuestoActualizar, txtNombreActualizar;
+    private JTextField txtAnioInicioActualizar, txtMesInicioActualizar, txtAnioFinActualizar, txtMesFinActualizar, txtEstadoActualizar;
 
     private JTextField txtIdEliminar;
 
-    public usuarioFrame(hubFrame ventana) {
+    public presupuestoFrame(hubFrame ventana) {
         this.ventanaPrincipal = ventana;
         setLayout(new BorderLayout());
         setBackground(Estilo.FONDO_PRINCIPAL);
         setBorder(BorderFactory.createEmptyBorder(28, 36, 24, 36));
 
         add(Estilo.crearEncabezado(
-                "Usuarios",
-                "Consulta, registra y administra las cuentas",
+                "Presupuestos",
+                "Planifica y organiza tus presupuestos",
                 "←  Volver al menú",
                 () -> {
                     limpiarTodo();
@@ -58,7 +60,6 @@ public class usuarioFrame extends JPanel {
 
         add(crearTarjetaPrincipal(), BorderLayout.CENTER);
     }
-
 
     private JPanel crearTarjetaPrincipal() {
         JPanel tarjeta = new JPanel(new BorderLayout());
@@ -143,7 +144,6 @@ public class usuarioFrame extends JPanel {
         cardTabs.show(panelTabs, nombre);
     }
 
-
     private JPanel crearTabConsultar() {
         JPanel panel = new JPanel(new BorderLayout(0, 18));
         panel.setOpaque(false);
@@ -152,7 +152,7 @@ public class usuarioFrame extends JPanel {
         txtIdConsultar.setPreferredSize(new Dimension(240, 40));
         txtIdConsultar.addActionListener(e -> consultar());
 
-        panel.add(crearFilaBusqueda(txtIdConsultar, Estilo.botonPrimario("Buscar", this::consultar)), BorderLayout.NORTH);
+        panel.add(crearFilaBusqueda("ID Presupuesto", txtIdConsultar, Estilo.botonPrimario("Buscar", this::consultar)), BorderLayout.NORTH);
 
         areaConsultar = new JTextArea();
         areaConsultar.setEditable(false);
@@ -167,18 +167,17 @@ public class usuarioFrame extends JPanel {
     private void consultar() {
         String id = txtIdConsultar.getText().trim();
         if (id.isEmpty()) {
-            Estilo.mostrarAviso(this, "Ingresa el ID del usuario que quieres buscar.");
+            Estilo.mostrarAviso(this, "Ingresa el ID del presupuesto que quieres buscar.");
             return;
         }
 
-        String resultado = crud.consultarUsuario(id);
+        String resultado = crud.consultarPresupuesto(id);
         if (resultado != null && !resultado.isEmpty()) {
-            areaConsultar.setText("--------------------------\nBusqueda Completada\n--------------------------\n\n" + resultado);
+            areaConsultar.setText("--------------------------\nBúsqueda Completada\n--------------------------\n\n" + resultado);
         } else {
-            areaConsultar.setText("[!] No se encontro el usuario con ID: " + id);
+            areaConsultar.setText("[!] No se encontró el presupuesto con ID: " + id);
         }
     }
-
 
     private JPanel crearTabListar() {
         JPanel panel = new JPanel(new BorderLayout(0, 14));
@@ -186,15 +185,22 @@ public class usuarioFrame extends JPanel {
 
         JPanel barra = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         barra.setOpaque(false);
-        barra.add(Estilo.botonPrimario("Cargar todos los usuarios", this::cargarLista));
+        
+        txtIdUsuarioListar = Estilo.crearCampo();
+        txtIdUsuarioListar.setPreferredSize(new Dimension(150, 40));
+        txtIdUsuarioListar.addActionListener(e -> cargarLista());
 
-        JLabel pista = new JLabel("Doble clic en una fila para editar ese usuario");
+        barra.add(Estilo.crearGrupo("ID Usuario", txtIdUsuarioListar));
+        barra.add(Box.createHorizontalStrut(10));
+        barra.add(Estilo.crearGrupo(" ", Estilo.botonPrimario("Cargar presupuestos", this::cargarLista)));
+
+        JLabel pista = new JLabel("Doble clic en una fila para editar");
         pista.setFont(Estilo.fuente(Font.PLAIN, 12));
         pista.setForeground(Estilo.TEXTO_SECUNDARIO);
         pista.setBorder(BorderFactory.createEmptyBorder(0, 14, 0, 0));
-        barra.add(pista);
+        barra.add(Estilo.crearGrupo(" ", pista));
 
-        String[] columnas = {"ID", "Nombres", "Apellidos", "Correo", "Registro", "Salario", "Estado"};
+        String[] columnas = {"ID Pres.", "ID Usu.", "Nombre", "Año Ini", "Mes Ini", "Año Fin", "Mes Fin", "Estado"};
         modeloListar = new DefaultTableModel(columnas, 0) {
             @Override
             public boolean isCellEditable(int fila, int columna) {
@@ -205,7 +211,7 @@ public class usuarioFrame extends JPanel {
         tablaListar = new JTable(modeloListar);
         Estilo.estilizarTabla(tablaListar);
 
-        int[] anchos = {65, 90, 90, 160, 92, 80, 75};
+        int[] anchos = {70, 70, 150, 60, 60, 60, 60, 80};
         for (int i = 0; i < anchos.length; i++) {
             tablaListar.getColumnModel().getColumn(i).setPreferredWidth(anchos[i]);
         }
@@ -228,38 +234,46 @@ public class usuarioFrame extends JPanel {
     }
 
     private void cargarLista() {
+        String idUsuario = txtIdUsuarioListar.getText().trim();
+        if (idUsuario.isEmpty()) {
+            Estilo.mostrarAviso(this, "Ingresa el ID de Usuario para cargar sus presupuestos.");
+            return;
+        }
+
         modeloListar.setRowCount(0);
-        ArrayList<String> lista = crud.listarUsuarios();
+        ArrayList<String> lista = crud.listarPresupuestosUsuario(idUsuario);
 
         if (lista != null && !lista.isEmpty()) {
             for (String fila : lista) {
                 String[] datos = fila.split(",", -1);
-                if (datos.length >= 7) {
+                if (datos.length >= 8) {
                     modeloListar.addRow(new Object[]{
-                            datos[0], datos[1], datos[2], datos[3], datos[4], formatearSalario(datos[5]), datos[6]
+                            datos[0], datos[1], datos[2], datos[3], datos[4], datos[5], datos[6], datos[7]
                     });
                 } else {
-                    modeloListar.addRow(new Object[]{fila, "", "", "", "", "", ""});
+                    modeloListar.addRow(new Object[]{fila, "", "", "", "", "", "", ""});
                 }
             }
         } else {
-            modeloListar.addRow(new Object[]{"Sin datos", "No hay usuarios registrados.", "", "", "", "", ""});
+            modeloListar.addRow(new Object[]{"Sin datos", "No hay presupuestos.", "", "", "", "", "", ""});
         }
     }
 
     private void editarDesdeTabla(int fila) {
-        if (valorTabla(fila, 6).isEmpty()) {
+        if (valorTabla(fila, 7).isEmpty()) {
             return;
         }
 
-        txtIdActualizar.setText(valorTabla(fila, 0));
-        txtNombresActualizar.setText(valorTabla(fila, 1));
-        txtApellidosActualizar.setText(valorTabla(fila, 2));
-        txtCorreoActualizar.setText(valorTabla(fila, 3));
-        txtSalarioActualizar.setText(salarioPlano(valorTabla(fila, 5)));
+        txtIdPresupuestoActualizar.setText(valorTabla(fila, 0));
+        txtNombreActualizar.setText(valorTabla(fila, 2));
+        txtAnioInicioActualizar.setText(valorTabla(fila, 3));
+        txtMesInicioActualizar.setText(valorTabla(fila, 4));
+        txtAnioFinActualizar.setText(valorTabla(fila, 5));
+        txtMesFinActualizar.setText(valorTabla(fila, 6));
+        txtEstadoActualizar.setText(valorTabla(fila, 7));
 
         seleccionarTab(TAB_ACTUALIZAR);
-        txtNombresActualizar.requestFocusInWindow();
+        txtNombreActualizar.requestFocusInWindow();
     }
 
     private String valorTabla(int fila, int columna) {
@@ -267,86 +281,98 @@ public class usuarioFrame extends JPanel {
         return valor == null ? "" : valor.toString();
     }
 
-
     private JPanel crearTabInsertar() {
-        txtIdInsertar = Estilo.crearCampo();
-        txtNombresInsertar = Estilo.crearCampo();
-        txtApellidosInsertar = Estilo.crearCampo();
-        txtCorreoInsertar = Estilo.crearCampo();
-        txtSalarioInsertar = Estilo.crearCampo();
+        txtIdPresupuestoInsertar = Estilo.crearCampo();
+        txtIdUsuarioInsertar = Estilo.crearCampo();
+        txtNombreInsertar = Estilo.crearCampo();
+        txtAnioInicioInsertar = Estilo.crearCampo();
+        txtMesInicioInsertar = Estilo.crearCampo();
+        txtAnioFinInsertar = Estilo.crearCampo();
+        txtMesFinInsertar = Estilo.crearCampo();
 
-        JPanel form = new JPanel(new GridLayout(3, 2, 20, 14));
+        JPanel form = new JPanel(new GridLayout(4, 2, 20, 14));
         form.setOpaque(false);
-        form.add(Estilo.crearGrupo("ID de usuario", txtIdInsertar));
-        form.add(Estilo.crearGrupo("Correo", txtCorreoInsertar));
-        form.add(Estilo.crearGrupo("Nombres", txtNombresInsertar));
-        form.add(Estilo.crearGrupo("Apellidos", txtApellidosInsertar));
-        form.add(Estilo.crearGrupo("Salario base (L.)", txtSalarioInsertar));
+        form.add(Estilo.crearGrupo("ID Presupuesto", txtIdPresupuestoInsertar));
+        form.add(Estilo.crearGrupo("ID Usuario", txtIdUsuarioInsertar));
+        form.add(Estilo.crearGrupo("Nombre", txtNombreInsertar));
+        form.add(new JLabel());
+        form.add(Estilo.crearGrupo("Año Inicio", txtAnioInicioInsertar));
+        form.add(Estilo.crearGrupo("Mes Inicio (1-12)", txtMesInicioInsertar));
+        form.add(Estilo.crearGrupo("Año Fin", txtAnioFinInsertar));
+        form.add(Estilo.crearGrupo("Mes Fin (1-12)", txtMesFinInsertar));
 
         JPanel botones = crearBotonera(
-                Estilo.botonPrimario("Guardar usuario", this::insertar),
+                Estilo.botonPrimario("Guardar presupuesto", this::insertar),
                 Estilo.botonSecundario("Limpiar", this::limpiarInsertar));
 
         return crearFormulario(form, botones);
     }
 
     private void insertar() {
-        String id = txtIdInsertar.getText().trim();
-        String nombres = txtNombresInsertar.getText().trim();
-        String apellidos = txtApellidosInsertar.getText().trim();
-        String correo = txtCorreoInsertar.getText().trim();
-        String salario = txtSalarioInsertar.getText().trim();
+        String idPres = txtIdPresupuestoInsertar.getText().trim();
+        String idUsu = txtIdUsuarioInsertar.getText().trim();
+        String nombre = txtNombreInsertar.getText().trim();
+        String anioIniStr = txtAnioInicioInsertar.getText().trim();
+        String mesIniStr = txtMesInicioInsertar.getText().trim();
+        String anioFinStr = txtAnioFinInsertar.getText().trim();
+        String mesFinStr = txtMesFinInsertar.getText().trim();
 
-        String error = validarDatos(id, nombres, apellidos, correo, salario);
-        if (error != null) {
-            Estilo.mostrarAviso(this, error);
+        if (idPres.isEmpty() || idUsu.isEmpty() || nombre.isEmpty()) {
+            Estilo.mostrarAviso(this, "Completa los campos obligatorios.");
             return;
         }
 
-        if (buscarFilaPorId(id) != null) {
-            Estilo.mostrarAviso(this, "Ya existe un usuario con el ID: " + id);
-            return;
-        }
+        try {
+            int anioIni = Integer.parseInt(anioIniStr);
+            int mesIni = Integer.parseInt(mesIniStr);
+            int anioFin = Integer.parseInt(anioFinStr);
+            int mesFin = Integer.parseInt(mesFinStr);
 
-        boolean ok = crud.insertarUsuario(id, nombres, apellidos, correo, Double.parseDouble(salario), usuarioActual());
-        if (ok) {
-            Estilo.mostrarInfo(this, "Usuario registrado correctamente.");
-            limpiarInsertar();
-            cargarLista();
-        } else {
-            Estilo.mostrarError(this, "No se pudo registrar el usuario. Revisa la consola para ver el detalle.");
+            boolean ok = crud.insertarPresupuesto(idPres, idUsu, nombre, anioIni, mesIni, anioFin, mesFin, usuarioActual());
+            if (ok) {
+                Estilo.mostrarInfo(this, "Presupuesto registrado correctamente.");
+                limpiarInsertar();
+            } else {
+                Estilo.mostrarError(this, "No se pudo registrar el presupuesto.");
+            }
+        } catch (NumberFormatException e) {
+            Estilo.mostrarAviso(this, "Los años y meses deben ser números enteros.");
         }
     }
 
     private void limpiarInsertar() {
-        txtIdInsertar.setText("");
-        txtNombresInsertar.setText("");
-        txtApellidosInsertar.setText("");
-        txtCorreoInsertar.setText("");
-        txtSalarioInsertar.setText("");
+        txtIdPresupuestoInsertar.setText("");
+        txtIdUsuarioInsertar.setText("");
+        txtNombreInsertar.setText("");
+        txtAnioInicioInsertar.setText("");
+        txtMesInicioInsertar.setText("");
+        txtAnioFinInsertar.setText("");
+        txtMesFinInsertar.setText("");
     }
 
-
     private JPanel crearTabActualizar() {
-        txtIdActualizar = Estilo.crearCampo();
-        txtIdActualizar.setPreferredSize(new Dimension(240, 40));
-        txtIdActualizar.addActionListener(e -> cargarParaActualizar());
+        txtIdPresupuestoActualizar = Estilo.crearCampo();
+        txtIdPresupuestoActualizar.setPreferredSize(new Dimension(240, 40));
+        
+        txtNombreActualizar = Estilo.crearCampo();
+        txtAnioInicioActualizar = Estilo.crearCampo();
+        txtMesInicioActualizar = Estilo.crearCampo();
+        txtAnioFinActualizar = Estilo.crearCampo();
+        txtMesFinActualizar = Estilo.crearCampo();
+        txtEstadoActualizar = Estilo.crearCampo();
 
-        txtNombresActualizar = Estilo.crearCampo();
-        txtApellidosActualizar = Estilo.crearCampo();
-        txtCorreoActualizar = Estilo.crearCampo();
-        txtSalarioActualizar = Estilo.crearCampo();
-
-        JPanel form = new JPanel(new GridLayout(2, 2, 20, 14));
+        JPanel form = new JPanel(new GridLayout(3, 2, 20, 14));
         form.setOpaque(false);
-        form.add(Estilo.crearGrupo("Nombres", txtNombresActualizar));
-        form.add(Estilo.crearGrupo("Apellidos", txtApellidosActualizar));
-        form.add(Estilo.crearGrupo("Correo", txtCorreoActualizar));
-        form.add(Estilo.crearGrupo("Salario base (L.)", txtSalarioActualizar));
+        form.add(Estilo.crearGrupo("Nombre", txtNombreActualizar));
+        form.add(Estilo.crearGrupo("Estado", txtEstadoActualizar));
+        form.add(Estilo.crearGrupo("Año Inicio", txtAnioInicioActualizar));
+        form.add(Estilo.crearGrupo("Mes Inicio", txtMesInicioActualizar));
+        form.add(Estilo.crearGrupo("Año Fin", txtAnioFinActualizar));
+        form.add(Estilo.crearGrupo("Mes Fin", txtMesFinActualizar));
 
         JPanel superior = new JPanel(new BorderLayout(0, 18));
         superior.setOpaque(false);
-        superior.add(crearFilaBusqueda(txtIdActualizar, Estilo.botonSecundario("Cargar datos", this::cargarParaActualizar)),
+        superior.add(crearFilaBusqueda("ID Presupuesto", txtIdPresupuestoActualizar, new JLabel(" ")),
                 BorderLayout.NORTH);
         superior.add(form, BorderLayout.CENTER);
 
@@ -357,63 +383,47 @@ public class usuarioFrame extends JPanel {
         return crearFormulario(superior, botones);
     }
 
-    private void cargarParaActualizar() {
-        String id = txtIdActualizar.getText().trim();
-        if (id.isEmpty()) {
-            Estilo.mostrarAviso(this, "Ingresa el ID del usuario que quieres actualizar.");
-            return;
-        }
-
-        String[] fila = buscarFilaPorId(id);
-        if (fila == null) {
-            Estilo.mostrarAviso(this, "No se encontro el usuario con ID: " + id);
-            return;
-        }
-
-        txtIdActualizar.setText(fila[0].trim());
-        txtNombresActualizar.setText(fila[1]);
-        txtApellidosActualizar.setText(fila[2]);
-        txtCorreoActualizar.setText(fila[3]);
-        txtSalarioActualizar.setText(salarioPlano(fila[5]));
-        txtNombresActualizar.requestFocusInWindow();
-    }
-
     private void actualizar() {
-        String id = txtIdActualizar.getText().trim();
-        String nombres = txtNombresActualizar.getText().trim();
-        String apellidos = txtApellidosActualizar.getText().trim();
-        String correo = txtCorreoActualizar.getText().trim();
-        String salario = txtSalarioActualizar.getText().trim();
+        String idPres = txtIdPresupuestoActualizar.getText().trim();
+        String nombre = txtNombreActualizar.getText().trim();
+        String anioIniStr = txtAnioInicioActualizar.getText().trim();
+        String mesIniStr = txtMesInicioActualizar.getText().trim();
+        String anioFinStr = txtAnioFinActualizar.getText().trim();
+        String mesFinStr = txtMesFinActualizar.getText().trim();
+        String estado = txtEstadoActualizar.getText().trim();
 
-        String error = validarDatos(id, nombres, apellidos, correo, salario);
-        if (error != null) {
-            Estilo.mostrarAviso(this, error);
+        if (idPres.isEmpty() || nombre.isEmpty() || estado.isEmpty()) {
+            Estilo.mostrarAviso(this, "Completa los campos obligatorios.");
             return;
         }
 
-        if (buscarFilaPorId(id) == null) {
-            Estilo.mostrarAviso(this, "No existe un usuario con el ID: " + id);
-            return;
-        }
+        try {
+            int anioIni = Integer.parseInt(anioIniStr);
+            int mesIni = Integer.parseInt(mesIniStr);
+            int anioFin = Integer.parseInt(anioFinStr);
+            int mesFin = Integer.parseInt(mesFinStr);
 
-        boolean ok = crud.actualizarUsuario(id, nombres, apellidos, correo, Double.parseDouble(salario), usuarioActual());
-        if (ok) {
-            Estilo.mostrarInfo(this, "Usuario actualizado correctamente.");
-            limpiarActualizar();
-            cargarLista();
-        } else {
-            Estilo.mostrarError(this, "No se pudo actualizar el usuario. Revisa la consola para ver el detalle.");
+            boolean ok = crud.actualizarPresupuesto(idPres, nombre, anioIni, mesIni, anioFin, mesFin, estado, usuarioActual());
+            if (ok) {
+                Estilo.mostrarInfo(this, "Presupuesto actualizado correctamente.");
+                limpiarActualizar();
+            } else {
+                Estilo.mostrarError(this, "No se pudo actualizar el presupuesto.");
+            }
+        } catch (NumberFormatException e) {
+            Estilo.mostrarAviso(this, "Los años y meses deben ser números enteros.");
         }
     }
 
     private void limpiarActualizar() {
-        txtIdActualizar.setText("");
-        txtNombresActualizar.setText("");
-        txtApellidosActualizar.setText("");
-        txtCorreoActualizar.setText("");
-        txtSalarioActualizar.setText("");
+        txtIdPresupuestoActualizar.setText("");
+        txtNombreActualizar.setText("");
+        txtAnioInicioActualizar.setText("");
+        txtMesInicioActualizar.setText("");
+        txtAnioFinActualizar.setText("");
+        txtMesFinActualizar.setText("");
+        txtEstadoActualizar.setText("");
     }
-
 
     private JPanel crearTabEliminar() {
         JPanel panel = new JPanel(new BorderLayout(0, 18));
@@ -423,10 +433,10 @@ public class usuarioFrame extends JPanel {
         txtIdEliminar.setPreferredSize(new Dimension(240, 40));
         txtIdEliminar.addActionListener(e -> eliminar());
 
-        panel.add(crearFilaBusqueda(txtIdEliminar, Estilo.botonPeligro("Eliminar usuario", this::eliminar)),
+        panel.add(crearFilaBusqueda("ID Presupuesto", txtIdEliminar, Estilo.botonPeligro("Eliminar", this::eliminar)),
                 BorderLayout.NORTH);
 
-        JLabel aviso = new JLabel("Escribe el ID del usuario que quieres eliminar. Antes de continuar se te pedirá confirmación.");
+        JLabel aviso = new JLabel("Escribe el ID del presupuesto que quieres eliminar.");
         aviso.setFont(Estilo.fuente(Font.PLAIN, 13));
         aviso.setForeground(Estilo.TEXTO_SECUNDARIO);
         aviso.setVerticalAlignment(SwingConstants.TOP);
@@ -438,90 +448,32 @@ public class usuarioFrame extends JPanel {
     private void eliminar() {
         String id = txtIdEliminar.getText().trim();
         if (id.isEmpty()) {
-            Estilo.mostrarAviso(this, "Ingresa el ID del usuario que quieres eliminar.");
+            Estilo.mostrarAviso(this, "Ingresa el ID del presupuesto.");
             return;
         }
 
-        String[] fila = buscarFilaPorId(id);
-        if (fila == null) {
-            Estilo.mostrarAviso(this, "No se encontro el usuario con ID: " + id);
-            return;
-        }
-
-        String nombreCompleto = (fila[1] + " " + fila[2]).trim();
         boolean confirmado = Estilo.confirmar(this,
-                "¿Seguro que quieres eliminar a " + nombreCompleto + " (ID: " + fila[0].trim() + ")?",
-                "Confirmar eliminación",
+                "¿Seguro que quieres eliminar el presupuesto con ID: " + id + "?",
+                "Confirmar",
                 "Sí, eliminar");
         if (!confirmado) {
             return;
         }
 
-        boolean ok = crud.eliminarUsuario(id, usuarioActual());
+        boolean ok = crud.eliminarPresupuesto(id);
         if (ok) {
-            Estilo.mostrarInfo(this, "Usuario eliminado correctamente.");
+            Estilo.mostrarInfo(this, "Presupuesto eliminado correctamente.");
             txtIdEliminar.setText("");
-            cargarLista();
+            if (!txtIdUsuarioListar.getText().isEmpty()) {
+                cargarLista();
+            }
         } else {
-            Estilo.mostrarError(this, "No se pudo eliminar el usuario. Revisa la consola para ver el detalle.");
+            Estilo.mostrarError(this, "No se pudo eliminar el presupuesto.");
         }
     }
-
 
     private String usuarioActual() {
         return ventanaPrincipal.getNombreCuenta();
-    }
-
-    private String[] buscarFilaPorId(String id) {
-        ArrayList<String> lista = crud.listarUsuarios();
-        if (lista == null) {
-            return null;
-        }
-        for (String fila : lista) {
-            String[] datos = fila.split(",", -1);
-            if (datos.length >= 7 && datos[0].trim().equalsIgnoreCase(id.trim())) {
-                return datos;
-            }
-        }
-        return null;
-    }
-
-    private String validarDatos(String id, String nombres, String apellidos, String correo, String salario) {
-        if (id.isEmpty()) {
-            return "El ID de usuario es obligatorio.";
-        }
-        if (nombres.isEmpty()) {
-            return "Los nombres son obligatorios.";
-        }
-        if (apellidos.isEmpty()) {
-            return "Los apellidos son obligatorios.";
-        }
-        if (!correo.matches("[^@\\s]+@[^@\\s]+\\.[^@\\s]+")) {
-            return "El correo no tiene un formato válido (ejemplo: nombre@correo.com).";
-        }
-        if (!salario.matches("\\d+(\\.\\d{1,2})?")) {
-            return "El salario debe ser un número positivo, por ejemplo: 15000 o 15000.50";
-        }
-        if (id.contains(",") || nombres.contains(",") || apellidos.contains(",") || correo.contains(",")) {
-            return "No uses comas en el ID, nombres, apellidos ni correo.";
-        }
-        return null;
-    }
-
-    private String formatearSalario(String bruto) {
-        try {
-            return String.format(Locale.US, "%,.2f", Double.parseDouble(bruto.trim()));
-        } catch (NumberFormatException e) {
-            return bruto;
-        }
-    }
-
-    private String salarioPlano(String texto) {
-        try {
-            return String.format(Locale.US, "%.2f", Double.parseDouble(texto.replace(",", "").trim()));
-        } catch (NumberFormatException e) {
-            return texto;
-        }
     }
 
     private void limpiarTodo() {
@@ -534,7 +486,7 @@ public class usuarioFrame extends JPanel {
         seleccionarTab(TAB_CONSULTAR);
     }
 
-    private JPanel crearFilaBusqueda(JTextField campo, JButton boton) {
+    private JPanel crearFilaBusqueda(String etiqueta, JTextField campo, Component boton) {
         JPanel fila = new JPanel(new BorderLayout(12, 0));
         fila.setOpaque(false);
         fila.add(campo, BorderLayout.CENTER);
@@ -542,7 +494,7 @@ public class usuarioFrame extends JPanel {
 
         JPanel contenedor = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         contenedor.setOpaque(false);
-        contenedor.add(Estilo.crearGrupo("ID de usuario", fila));
+        contenedor.add(Estilo.crearGrupo(etiqueta, fila));
         return contenedor;
     }
 
