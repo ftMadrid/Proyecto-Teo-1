@@ -86,12 +86,12 @@ public class CrudPresupuesto {
             ResultSet rs = cs.executeQuery();
             
             if(rs.next()){
-                resultado = "| ID-Presupuesto: " + rs.getString("id_presupuesto") +
-                            " | ID Usuario: " + rs.getString("id_usuario") +
-                            " | Nombre: " + rs.getString("nombre_descriptivo") + 
-                            " | Inicio: " + rs.getInt("mes_inicio") + "/" + rs.getInt("anio_inicio") + 
-                            " | Fin: " + rs.getInt("mes_fin") + "/" + rs.getInt("anio_fin") + 
-                            " | Estado: " + rs.getString("estado_presupuesto");
+                resultado = "ID Presupuesto: " + rs.getString("id_presupuesto") + "\n" +
+                            "ID Usuario: " + rs.getString("id_usuario") + "\n" +
+                            "Nombre: " + rs.getString("nombre_descriptivo") + "\n" +
+                            "Inicio: " + rs.getInt("mes_inicio") + "/" + rs.getInt("anio_inicio") + "\n" +
+                            "Fin: " + rs.getInt("mes_fin") + "/" + rs.getInt("anio_fin") + "\n" +
+                            "Estado: " + rs.getString("estado_presupuesto");
             }
         }catch(Exception e){
             System.err.println("[ERROR] No se pudo consultar: " + e.getMessage());

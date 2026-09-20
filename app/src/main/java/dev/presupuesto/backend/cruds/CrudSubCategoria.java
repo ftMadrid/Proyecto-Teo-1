@@ -80,11 +80,11 @@ public class CrudSubCategoria {
             ResultSet rs = cs.executeQuery();
             
             if(rs.next()){
-                resultado = "| ID-Subcategoria: " + rs.getString("id_subcategoria") +
-                            " | Nombre: " + rs.getString("nombre") + 
-                            " | Categoria: " + rs.getString("nombre_categoria") + 
-                            " | Desc: " + rs.getString("descripcion") + 
-                            " | Activa: " + (rs.getBoolean("activa") ? "Si" : "No");
+                resultado = "ID Subcategoría: " + rs.getString("id_subcategoria") + "\n" +
+                            "Nombre: " + rs.getString("nombre") + "\n" +
+                            "Categoría: " + rs.getString("nombre_categoria") + "\n" +
+                            "Desc: " + rs.getString("descripcion") + "\n" +
+                            "Activa: " + (rs.getBoolean("activa") ? "Sí" : "No");
             }
         }catch(Exception e){
             System.err.println("[ERROR] No se pudo consultar: " + e.getMessage());
@@ -104,8 +104,18 @@ public class CrudSubCategoria {
             ResultSet rs = cs.executeQuery();
             
             while(rs.next()){
-                String fila = rs.getString("id_subcategoria") + " - " + 
-                              rs.getString("nombre") + " [" + (rs.getBoolean("activa") ? "ACTIVA" : "INACTIVA") + "]";
+                String idSub = rs.getString("id_subcategoria");
+                String nom = rs.getString("nombre");
+                String act = rs.getBoolean("activa") ? "Sí" : "No";
+                
+                String desc = "";
+                String idCat = "";
+                try {
+                    desc = rs.getString("descripcion");
+                    idCat = rs.getString("id_categoria");
+                } catch(Exception e) {}
+                
+                String fila = idSub + "," + idCat + "," + nom + "," + desc + "," + act;
                 lista.add(fila);
             }
         }catch(Exception e){

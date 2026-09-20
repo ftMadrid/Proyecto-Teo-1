@@ -16,18 +16,18 @@ public final class Estilo {
     private Estilo() {
     }
  
-    public static final Color FONDO_PRINCIPAL = new Color(235, 238, 242);
-    public static final Color FONDO_TARJETA = new Color(255, 255, 255);
-    public static final Color TEXTO_PRIMARIO = new Color(40, 40, 40);
-    public static final Color TEXTO_SECUNDARIO = new Color(120, 120, 120);
-    public static final Color COLOR_INPUT = new Color(248, 250, 252);
-    public static final Color COLOR_BORDE_INPUT = new Color(210, 215, 220);
-    public static final Color COLOR_BORDE = new Color(220, 225, 230);
-    public static final Color COLOR_BOTON = new Color(0, 110, 255);
-    public static final Color COLOR_BOTON_HOVER = new Color(0, 90, 215);
-    public static final Color COLOR_ACENTO_SUAVE = new Color(230, 240, 255);
-    public static final Color COLOR_PELIGRO = new Color(214, 48, 49);
-    public static final Color COLOR_PELIGRO_HOVER = new Color(184, 36, 37);
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
  
     public static final String FUENTE = "Segoe UI";
  
@@ -38,7 +38,7 @@ public final class Estilo {
     public static JLabel etiquetaCampo(String texto) {
         JLabel label = new JLabel(texto.toUpperCase());
         label.setFont(fuente(Font.BOLD, 11));
-        label.setForeground(TEXTO_SECUNDARIO);
+        label.setForeground(Tema.textoSecundario());
         return label;
     }
  
@@ -53,12 +53,12 @@ public final class Estilo {
  
         JLabel labelTitulo = new JLabel(titulo);
         labelTitulo.setFont(fuente(Font.BOLD, 26));
-        labelTitulo.setForeground(TEXTO_PRIMARIO);
+        labelTitulo.setForeground(Tema.textoPrimario());
         labelTitulo.setAlignmentX(Component.LEFT_ALIGNMENT);
  
         JLabel labelSubtitulo = new JLabel(subtitulo);
         labelSubtitulo.setFont(fuente(Font.PLAIN, 14));
-        labelSubtitulo.setForeground(TEXTO_SECUNDARIO);
+        labelSubtitulo.setForeground(Tema.textoSecundario());
         labelSubtitulo.setBorder(BorderFactory.createEmptyBorder(4, 0, 0, 0));
         labelSubtitulo.setAlignmentX(Component.LEFT_ALIGNMENT);
  
@@ -84,20 +84,20 @@ public final class Estilo {
     public static JTextField crearCampo() {
         JTextField campo = new JTextField();
         campo.setFont(fuente(Font.PLAIN, 15));
-        campo.setBackground(COLOR_INPUT);
-        campo.setForeground(TEXTO_PRIMARIO);
-        campo.setCaretColor(Color.BLACK);
-        campo.setBorder(bordeCampo(COLOR_BORDE_INPUT));
+        campo.setBackground(Tema.input());
+        campo.setForeground(Tema.textoPrimario());
+        campo.setCaretColor(Tema.textoPrimario());
+        campo.setBorder(bordeCampo(Tema.bordeInput()));
         campo.setPreferredSize(new Dimension(200, 40));
  
         campo.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
-                campo.setBorder(bordeCampo(COLOR_BOTON));
+                campo.setBorder(bordeCampo(Tema.boton()));
             }
             @Override
             public void focusLost(FocusEvent e) {
-                campo.setBorder(bordeCampo(COLOR_BORDE_INPUT));
+                campo.setBorder(bordeCampo(Tema.bordeInput()));
             }
         });
         return campo;
@@ -112,11 +112,11 @@ public final class Estilo {
     }
  
     public static JButton botonPrimario(String texto, Runnable accion) {
-        return crearBotonSolido(texto, COLOR_BOTON, COLOR_BOTON_HOVER, accion);
+        return crearBotonSolido(texto, Tema.boton(), Tema.botonHover(), accion);
     }
  
     public static JButton botonPeligro(String texto, Runnable accion) {
-        return crearBotonSolido(texto, COLOR_PELIGRO, COLOR_PELIGRO_HOVER, accion);
+        return crearBotonSolido(texto, Tema.peligro(), Tema.peligroHover(), accion);
     }
  
     private static JButton crearBotonSolido(String texto, Color normal, Color hover, Runnable accion) {
@@ -157,25 +157,25 @@ public final class Estilo {
     public static JButton botonSecundario(String texto, Runnable accion) {
         JButton boton = new JButton(texto);
         boton.setFont(fuente(Font.BOLD, 13));
-        boton.setForeground(TEXTO_SECUNDARIO);
-        boton.setBackground(FONDO_TARJETA);
+        boton.setForeground(Tema.textoSecundario());
+        boton.setBackground(Tema.fondoTarjeta());
         boton.setOpaque(true);
         boton.setContentAreaFilled(true);
         boton.setFocusPainted(false);
-        boton.setBorder(bordeBotonSecundario(COLOR_BORDE));
+        boton.setBorder(bordeBotonSecundario(Tema.borde()));
         boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
         boton.setPreferredSize(new Dimension(boton.getPreferredSize().width, 40));
  
         boton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                boton.setForeground(COLOR_BOTON_HOVER);
-                boton.setBorder(bordeBotonSecundario(COLOR_BOTON));
+                boton.setForeground(Tema.botonHover());
+                boton.setBorder(bordeBotonSecundario(Tema.boton()));
             }
             @Override
             public void mouseExited(MouseEvent e) {
-                boton.setForeground(TEXTO_SECUNDARIO);
-                boton.setBorder(bordeBotonSecundario(COLOR_BORDE));
+                boton.setForeground(Tema.textoSecundario());
+                boton.setBorder(bordeBotonSecundario(Tema.borde()));
             }
         });
  
@@ -185,15 +185,15 @@ public final class Estilo {
  
     public static void estilizarTabla(JTable tabla) {
         tabla.setFont(fuente(Font.PLAIN, 12));
-        tabla.setForeground(TEXTO_PRIMARIO);
-        tabla.setBackground(FONDO_TARJETA);
+        tabla.setForeground(Tema.textoPrimario());
+        tabla.setBackground(Tema.fondoTarjeta());
         tabla.setRowHeight(32);
         tabla.setGridColor(new Color(236, 239, 243));
         tabla.setShowVerticalLines(false);
         tabla.setShowHorizontalLines(true);
         tabla.setIntercellSpacing(new Dimension(0, 1));
-        tabla.setSelectionBackground(COLOR_ACENTO_SUAVE);
-        tabla.setSelectionForeground(TEXTO_PRIMARIO);
+        tabla.setSelectionBackground(Tema.acentoSuave());
+        tabla.setSelectionForeground(Tema.textoPrimario());
         tabla.setFillsViewportHeight(true);
 
         tabla.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
@@ -216,11 +216,11 @@ public final class Estilo {
                                                            boolean foco, int fila, int columna) {
                 super.getTableCellRendererComponent(t, valor, false, false, fila, columna);
                 setText(valor == null ? "" : valor.toString().toUpperCase());
-                setBackground(COLOR_INPUT);
-                setForeground(TEXTO_SECUNDARIO);
+                setBackground(Tema.input());
+                setForeground(Tema.textoSecundario());
                 setFont(fuente(Font.BOLD, 11));
                 setBorder(BorderFactory.createCompoundBorder(
-                        BorderFactory.createMatteBorder(0, 0, 1, 0, COLOR_BORDE),
+                        BorderFactory.createMatteBorder(0, 0, 1, 0, Tema.borde()),
                         BorderFactory.createEmptyBorder(0, 8, 0, 8)
                 ));
                 return this;
@@ -232,8 +232,8 @@ public final class Estilo {
  
     public static JScrollPane crearScroll(Component contenido) {
         JScrollPane scroll = new JScrollPane(contenido);
-        scroll.setBorder(BorderFactory.createLineBorder(COLOR_BORDE, 1));
-        scroll.getViewport().setBackground(FONDO_TARJETA);
+        scroll.setBorder(BorderFactory.createLineBorder(Tema.borde(), 1));
+        scroll.getViewport().setBackground(Tema.fondoTarjeta());
         return scroll;
     }
  
@@ -244,9 +244,9 @@ public final class Estilo {
             anteriores[i] = UIManager.get(claves[i]);
         }
  
-        UIManager.put("Panel.background", FONDO_TARJETA);
-        UIManager.put("OptionPane.background", FONDO_TARJETA);
-        UIManager.put("OptionPane.messageForeground", TEXTO_PRIMARIO);
+        UIManager.put("Panel.background", Tema.fondoTarjeta());
+        UIManager.put("OptionPane.background", Tema.fondoTarjeta());
+        UIManager.put("OptionPane.messageForeground", Tema.textoPrimario());
  
         try {
             return dialogo.get();

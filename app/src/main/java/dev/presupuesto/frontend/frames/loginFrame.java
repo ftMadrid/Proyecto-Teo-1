@@ -90,7 +90,7 @@ public class loginFrame extends JFrame {
         botonLogin.setForeground(Color.WHITE); 
         botonLogin.setFont(new Font("Segoe UI", Font.BOLD, 15));
         
-        // Ajustes para que el boton se vea correctamente
+        
         botonLogin.setOpaque(true);
         botonLogin.setContentAreaFilled(true);
         botonLogin.setFocusPainted(false); 

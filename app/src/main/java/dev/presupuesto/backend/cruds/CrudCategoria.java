@@ -82,11 +82,11 @@ public class CrudCategoria {
             ResultSet rs = cs.executeQuery();
             
             if(rs.next()){
-                resultado = "| ID-Categoria: " + rs.getString("id_categoria") +
-                            " | Nombre: " + rs.getString("nombre") + 
-                            " | Tipo: " + rs.getString("tipo_categoria") + 
-                            " | Orden: " + rs.getInt("orden") +
-                            " | Desc: " + rs.getString("descripcion");
+                resultado = "ID Categoría: " + rs.getString("id_categoria") + "\n" +
+                            "Nombre: " + rs.getString("nombre") + "\n" +
+                            "Tipo: " + rs.getString("tipo_categoria") + "\n" +
+                            "Orden: " + rs.getInt("orden") + "\n" +
+                            "Desc: " + rs.getString("descripcion");
             }
         }catch(Exception e){
             System.err.println("[ERROR] No se pudo consultar: " + e.getMessage());
@@ -106,8 +106,19 @@ public class CrudCategoria {
             ResultSet rs = cs.executeQuery();
             
             while(rs.next()){
-                String fila = rs.getString("id_categoria") + " - " + 
-                              rs.getString("nombre") + " [" + rs.getString("tipo_categoria") + "]";
+                String idCat = rs.getString("id_categoria");
+                String nom = rs.getString("nombre");
+                String tipo = rs.getString("tipo_categoria");
+                
+                String desc = "";
+                String ord = "0";
+                try {
+                    desc = rs.getString("descripcion");
+                    ord = String.valueOf(rs.getInt("orden"));
+                } catch(Exception e) {
+                }
+                
+                String fila = idCat + "," + nom + "," + tipo + "," + desc + "," + ord;
                 lista.add(fila);
             }
         }catch(Exception e){

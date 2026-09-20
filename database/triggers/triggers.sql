@@ -68,7 +68,7 @@ BEGIN
         id_categoria,
         nombre,
         descripcion,
-        es_defecto,
+        es_predeterminada,
         creado_por,
         creado_en,
         modificado_por,

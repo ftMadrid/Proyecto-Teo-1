@@ -2,6 +2,7 @@ package dev.presupuesto.frontend.frames;
 
 import dev.presupuesto.backend.cruds.CrudUsuario;
 import dev.presupuesto.frontend.utils.Estilo;
+import dev.presupuesto.frontend.utils.Tema;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -44,7 +45,7 @@ public class usuarioFrame extends JPanel {
     public usuarioFrame(hubFrame ventana) {
         this.ventanaPrincipal = ventana;
         setLayout(new BorderLayout());
-        setBackground(Estilo.FONDO_PRINCIPAL);
+        setBackground(Tema.fondoPrincipal());
         setBorder(BorderFactory.createEmptyBorder(28, 36, 24, 36));
 
         add(Estilo.crearEncabezado(
@@ -62,8 +63,8 @@ public class usuarioFrame extends JPanel {
 
     private JPanel crearTarjetaPrincipal() {
         JPanel tarjeta = new JPanel(new BorderLayout());
-        tarjeta.setBackground(Estilo.FONDO_TARJETA);
-        tarjeta.setBorder(BorderFactory.createLineBorder(Estilo.COLOR_BORDE, 1));
+        tarjeta.setBackground(Tema.fondoTarjeta());
+        tarjeta.setBorder(BorderFactory.createLineBorder(Tema.borde(), 1));
 
         cardTabs = new CardLayout();
         panelTabs = new JPanel(cardTabs);
@@ -87,7 +88,7 @@ public class usuarioFrame extends JPanel {
         JPanel barra = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         barra.setOpaque(false);
         barra.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createMatteBorder(0, 0, 1, 0, Estilo.COLOR_BORDE),
+                BorderFactory.createMatteBorder(0, 0, 1, 0, Tema.borde()),
                 BorderFactory.createEmptyBorder(0, 8, 0, 8)
         ));
 
@@ -114,13 +115,13 @@ public class usuarioFrame extends JPanel {
             @Override
             public void mouseEntered(MouseEvent e) {
                 if (!nombre.equals(tabActiva)) {
-                    boton.setForeground(Estilo.TEXTO_PRIMARIO);
+                    boton.setForeground(Tema.textoPrimario());
                 }
             }
             @Override
             public void mouseExited(MouseEvent e) {
                 if (!nombre.equals(tabActiva)) {
-                    boton.setForeground(Estilo.TEXTO_SECUNDARIO);
+                    boton.setForeground(Tema.textoSecundario());
                 }
             }
         });
@@ -128,9 +129,9 @@ public class usuarioFrame extends JPanel {
     }
 
     private void estilizarTab(JButton boton, boolean activo) {
-        boton.setForeground(activo ? Estilo.COLOR_BOTON : Estilo.TEXTO_SECUNDARIO);
+        boton.setForeground(activo ? Tema.boton() : Tema.textoSecundario());
         boton.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createMatteBorder(0, 0, 3, 0, activo ? Estilo.COLOR_BOTON : Estilo.FONDO_TARJETA),
+                BorderFactory.createMatteBorder(0, 0, 3, 0, activo ? Tema.boton() : Tema.fondoTarjeta()),
                 BorderFactory.createEmptyBorder(12, 18, 9, 18)
         ));
     }
@@ -156,8 +157,10 @@ public class usuarioFrame extends JPanel {
 
         areaConsultar = new JTextArea();
         areaConsultar.setEditable(false);
+        areaConsultar.setOpaque(true);
+        areaConsultar.setBackground(Tema.fondoConsola());
         areaConsultar.setFont(new Font("Monospaced", Font.PLAIN, 15));
-        areaConsultar.setForeground(Estilo.TEXTO_PRIMARIO);
+        areaConsultar.setForeground(Tema.textoConsola());
         areaConsultar.setMargin(new Insets(15, 15, 15, 15));
 
         panel.add(Estilo.crearScroll(areaConsultar), BorderLayout.CENTER);
@@ -190,7 +193,7 @@ public class usuarioFrame extends JPanel {
 
         JLabel pista = new JLabel("Doble clic en una fila para editar ese usuario");
         pista.setFont(Estilo.fuente(Font.PLAIN, 12));
-        pista.setForeground(Estilo.TEXTO_SECUNDARIO);
+        pista.setForeground(Tema.textoSecundario());
         pista.setBorder(BorderFactory.createEmptyBorder(0, 14, 0, 0));
         barra.add(pista);
 
@@ -428,7 +431,7 @@ public class usuarioFrame extends JPanel {
 
         JLabel aviso = new JLabel("Escribe el ID del usuario que quieres eliminar. Antes de continuar se te pedirá confirmación.");
         aviso.setFont(Estilo.fuente(Font.PLAIN, 13));
-        aviso.setForeground(Estilo.TEXTO_SECUNDARIO);
+        aviso.setForeground(Tema.textoSecundario());
         aviso.setVerticalAlignment(SwingConstants.TOP);
         panel.add(aviso, BorderLayout.CENTER);
 

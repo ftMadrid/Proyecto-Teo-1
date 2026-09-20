@@ -1,6 +1,6 @@
 package dev.presupuesto.frontend.frames;
 
-import dev.presupuesto.backend.cruds.CrudPresupuesto;
+import dev.presupuesto.backend.cruds.CrudCategoria;
 import dev.presupuesto.frontend.utils.Estilo;
 import dev.presupuesto.frontend.utils.Tema;
 
@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class presupuestoFrame extends JPanel {
+public class categoriaFrame extends JPanel {
 
     private static final String TAB_CONSULTAR = "Consultar";
     private static final String TAB_LISTAR = "Listar";
@@ -21,7 +21,7 @@ public class presupuestoFrame extends JPanel {
     private static final String TAB_ACTUALIZAR = "Actualizar";
     private static final String TAB_ELIMINAR = "Eliminar";
 
-    private CrudPresupuesto crud = new CrudPresupuesto();
+    private CrudCategoria crud = new CrudCategoria();
     private hubFrame ventanaPrincipal;
 
     private CardLayout cardTabs;
@@ -32,27 +32,25 @@ public class presupuestoFrame extends JPanel {
     private JTextField txtIdConsultar;
     private JTextArea areaConsultar;
 
-    private JTextField txtIdUsuarioListar;
+    private JTextField txtTipoCategoriaListar;
     private DefaultTableModel modeloListar;
     private JTable tablaListar;
 
-    private JTextField txtIdPresupuestoInsertar, txtIdUsuarioInsertar, txtNombreInsertar;
-    private JTextField txtAnioInicioInsertar, txtMesInicioInsertar, txtAnioFinInsertar, txtMesFinInsertar;
+    private JTextField txtIdCategoriaInsertar, txtNombreInsertar, txtDescripcionInsertar, txtTipoCategoriaInsertar, txtOrdenInsertar;
 
-    private JTextField txtIdPresupuestoActualizar, txtNombreActualizar;
-    private JTextField txtAnioInicioActualizar, txtMesInicioActualizar, txtAnioFinActualizar, txtMesFinActualizar, txtEstadoActualizar;
+    private JTextField txtIdCategoriaActualizar, txtNombreActualizar, txtDescripcionActualizar, txtTipoCategoriaActualizar, txtOrdenActualizar;
 
     private JTextField txtIdEliminar;
 
-    public presupuestoFrame(hubFrame ventana) {
+    public categoriaFrame(hubFrame ventana) {
         this.ventanaPrincipal = ventana;
         setLayout(new BorderLayout());
         setBackground(Tema.fondoPrincipal());
         setBorder(BorderFactory.createEmptyBorder(28, 36, 24, 36));
 
         add(Estilo.crearEncabezado(
-                "Presupuestos",
-                "Planifica y organiza tus presupuestos",
+                "Categorías",
+                "Gestiona las categorías de tu presupuesto",
                 "←  Volver al menú",
                 () -> {
                     limpiarTodo();
@@ -153,7 +151,7 @@ public class presupuestoFrame extends JPanel {
         txtIdConsultar.setPreferredSize(new Dimension(240, 40));
         txtIdConsultar.addActionListener(e -> consultar());
 
-        panel.add(crearFilaBusqueda("ID Presupuesto", txtIdConsultar, Estilo.botonPrimario("Buscar", this::consultar)), BorderLayout.NORTH);
+        panel.add(crearFilaBusqueda("ID Categoría", txtIdConsultar, Estilo.botonPrimario("Buscar", this::consultar)), BorderLayout.NORTH);
 
         areaConsultar = new JTextArea();
         areaConsultar.setEditable(false);
@@ -170,15 +168,15 @@ public class presupuestoFrame extends JPanel {
     private void consultar() {
         String id = txtIdConsultar.getText().trim();
         if (id.isEmpty()) {
-            Estilo.mostrarAviso(this, "Ingresa el ID del presupuesto que quieres buscar.");
+            Estilo.mostrarAviso(this, "Ingresa el ID de la categoría que quieres buscar.");
             return;
         }
 
-        String resultado = crud.consultarPresupuesto(id);
+        String resultado = crud.consultarCategoria(id);
         if (resultado != null && !resultado.isEmpty()) {
             areaConsultar.setText("--------------------------\nBúsqueda Completada\n--------------------------\n\n" + resultado);
         } else {
-            areaConsultar.setText("[!] No se encontró el presupuesto con ID: " + id);
+            areaConsultar.setText("[!] No se encontró la categoría con ID: " + id);
         }
     }
 
@@ -189,13 +187,13 @@ public class presupuestoFrame extends JPanel {
         JPanel barra = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         barra.setOpaque(false);
         
-        txtIdUsuarioListar = Estilo.crearCampo();
-        txtIdUsuarioListar.setPreferredSize(new Dimension(150, 40));
-        txtIdUsuarioListar.addActionListener(e -> cargarLista());
+        txtTipoCategoriaListar = Estilo.crearCampo();
+        txtTipoCategoriaListar.setPreferredSize(new Dimension(150, 40));
+        txtTipoCategoriaListar.addActionListener(e -> cargarLista());
 
-        barra.add(Estilo.crearGrupo("ID Usuario", txtIdUsuarioListar));
+        barra.add(Estilo.crearGrupo("Tipo Categoría", txtTipoCategoriaListar));
         barra.add(Box.createHorizontalStrut(10));
-        barra.add(Estilo.crearGrupo(" ", Estilo.botonPrimario("Cargar presupuestos", this::cargarLista)));
+        barra.add(Estilo.crearGrupo(" ", Estilo.botonPrimario("Cargar", this::cargarLista)));
 
         JLabel pista = new JLabel("Doble clic en una fila para editar");
         pista.setFont(Estilo.fuente(Font.PLAIN, 12));
@@ -203,7 +201,7 @@ public class presupuestoFrame extends JPanel {
         pista.setBorder(BorderFactory.createEmptyBorder(0, 14, 0, 0));
         barra.add(Estilo.crearGrupo(" ", pista));
 
-        String[] columnas = {"ID Pres.", "ID Usu.", "Nombre", "Año Ini", "Mes Ini", "Año Fin", "Mes Fin", "Estado"};
+        String[] columnas = {"ID", "Nombre", "Tipo", "Descripción", "Orden"};
         modeloListar = new DefaultTableModel(columnas, 0) {
             @Override
             public boolean isCellEditable(int fila, int columna) {
@@ -214,7 +212,7 @@ public class presupuestoFrame extends JPanel {
         tablaListar = new JTable(modeloListar);
         Estilo.estilizarTabla(tablaListar);
 
-        int[] anchos = {70, 70, 150, 60, 60, 60, 60, 80};
+        int[] anchos = {70, 150, 100, 200, 50};
         for (int i = 0; i < anchos.length; i++) {
             tablaListar.getColumnModel().getColumn(i).setPreferredWidth(anchos[i]);
         }
@@ -237,43 +235,43 @@ public class presupuestoFrame extends JPanel {
     }
 
     private void cargarLista() {
-        String idUsuario = txtIdUsuarioListar.getText().trim();
-        if (idUsuario.isEmpty()) {
-            Estilo.mostrarAviso(this, "Ingresa el ID de Usuario para cargar sus presupuestos.");
-            return;
-        }
+        String tipo = txtTipoCategoriaListar.getText().trim();
+        
 
         modeloListar.setRowCount(0);
-        ArrayList<String> lista = crud.listarPresupuestosUsuario(idUsuario);
+        ArrayList<String> lista = crud.listarCategorias(tipo);
 
         if (lista != null && !lista.isEmpty()) {
             for (String fila : lista) {
                 String[] datos = fila.split(",", -1);
-                if (datos.length >= 8) {
+                if (datos.length >= 3) {
+                    
+                    
+                    String desc = datos.length > 3 ? datos[3] : "";
+                    String ord = datos.length > 4 ? datos[4] : "";
                     modeloListar.addRow(new Object[]{
-                            datos[0], datos[1], datos[2], datos[3], datos[4], datos[5], datos[6], datos[7]
+                            datos[0], datos[1], datos[2], desc, ord
                     });
                 } else {
-                    modeloListar.addRow(new Object[]{fila, "", "", "", "", "", "", ""});
+                    
+                    modeloListar.addRow(new Object[]{fila, "", "", "", ""});
                 }
             }
         } else {
-            modeloListar.addRow(new Object[]{"Sin datos", "No hay presupuestos.", "", "", "", "", "", ""});
+            modeloListar.addRow(new Object[]{"Sin datos", "No hay categorías.", "", "", ""});
         }
     }
 
     private void editarDesdeTabla(int fila) {
-        if (valorTabla(fila, 7).isEmpty()) {
+        if (valorTabla(fila, 1).isEmpty() || valorTabla(fila, 0).equals("Sin datos")) {
             return;
         }
 
-        txtIdPresupuestoActualizar.setText(valorTabla(fila, 0));
-        txtNombreActualizar.setText(valorTabla(fila, 2));
-        txtAnioInicioActualizar.setText(valorTabla(fila, 3));
-        txtMesInicioActualizar.setText(valorTabla(fila, 4));
-        txtAnioFinActualizar.setText(valorTabla(fila, 5));
-        txtMesFinActualizar.setText(valorTabla(fila, 6));
-        txtEstadoActualizar.setText(valorTabla(fila, 7));
+        txtIdCategoriaActualizar.setText(valorTabla(fila, 0));
+        txtNombreActualizar.setText(valorTabla(fila, 1));
+        txtTipoCategoriaActualizar.setText(valorTabla(fila, 2));
+        txtDescripcionActualizar.setText(valorTabla(fila, 3));
+        txtOrdenActualizar.setText(valorTabla(fila, 4));
 
         seleccionarTab(TAB_ACTUALIZAR);
         txtNombreActualizar.requestFocusInWindow();
@@ -285,97 +283,86 @@ public class presupuestoFrame extends JPanel {
     }
 
     private JPanel crearTabInsertar() {
-        txtIdPresupuestoInsertar = Estilo.crearCampo();
-        txtIdUsuarioInsertar = Estilo.crearCampo();
+        txtIdCategoriaInsertar = Estilo.crearCampo();
         txtNombreInsertar = Estilo.crearCampo();
-        txtAnioInicioInsertar = Estilo.crearCampo();
-        txtMesInicioInsertar = Estilo.crearCampo();
-        txtAnioFinInsertar = Estilo.crearCampo();
-        txtMesFinInsertar = Estilo.crearCampo();
+        txtDescripcionInsertar = Estilo.crearCampo();
+        txtTipoCategoriaInsertar = Estilo.crearCampo();
+        txtOrdenInsertar = Estilo.crearCampo();
 
-        JPanel form = new JPanel(new GridLayout(4, 2, 20, 14));
+        JPanel form = new JPanel(new GridLayout(3, 2, 20, 14));
         form.setOpaque(false);
-        form.add(Estilo.crearGrupo("ID Presupuesto", txtIdPresupuestoInsertar));
-        form.add(Estilo.crearGrupo("ID Usuario", txtIdUsuarioInsertar));
+        form.add(Estilo.crearGrupo("ID Categoría", txtIdCategoriaInsertar));
         form.add(Estilo.crearGrupo("Nombre", txtNombreInsertar));
-        form.add(new JLabel());
-        form.add(Estilo.crearGrupo("Año Inicio", txtAnioInicioInsertar));
-        form.add(Estilo.crearGrupo("Mes Inicio (1-12)", txtMesInicioInsertar));
-        form.add(Estilo.crearGrupo("Año Fin", txtAnioFinInsertar));
-        form.add(Estilo.crearGrupo("Mes Fin (1-12)", txtMesFinInsertar));
+        form.add(Estilo.crearGrupo("Tipo (Ej. Gasto/Ingreso/Ahorro)", txtTipoCategoriaInsertar));
+        form.add(Estilo.crearGrupo("Descripción", txtDescripcionInsertar));
+        form.add(Estilo.crearGrupo("Orden (Número)", txtOrdenInsertar));
 
         JPanel botones = crearBotonera(
-                Estilo.botonPrimario("Guardar presupuesto", this::insertar),
+                Estilo.botonPrimario("Guardar", this::insertar),
                 Estilo.botonSecundario("Limpiar", this::limpiarInsertar));
 
         return crearFormulario(form, botones);
     }
 
     private void insertar() {
-        String idPres = txtIdPresupuestoInsertar.getText().trim();
-        String idUsu = txtIdUsuarioInsertar.getText().trim();
+        String idCat = txtIdCategoriaInsertar.getText().trim();
         String nombre = txtNombreInsertar.getText().trim();
-        String anioIniStr = txtAnioInicioInsertar.getText().trim();
-        String mesIniStr = txtMesInicioInsertar.getText().trim();
-        String anioFinStr = txtAnioFinInsertar.getText().trim();
-        String mesFinStr = txtMesFinInsertar.getText().trim();
+        String desc = txtDescripcionInsertar.getText().trim();
+        String tipo = txtTipoCategoriaInsertar.getText().trim();
+        String ordenStr = txtOrdenInsertar.getText().trim();
 
-        if (idPres.isEmpty() || idUsu.isEmpty() || nombre.isEmpty()) {
-            Estilo.mostrarAviso(this, "Completa los campos obligatorios.");
+        if (idCat.isEmpty() || nombre.isEmpty() || tipo.isEmpty()) {
+            Estilo.mostrarAviso(this, "Completa los campos obligatorios (ID, Nombre, Tipo).");
             return;
         }
 
-        try {
-            int anioIni = Integer.parseInt(anioIniStr);
-            int mesIni = Integer.parseInt(mesIniStr);
-            int anioFin = Integer.parseInt(anioFinStr);
-            int mesFin = Integer.parseInt(mesFinStr);
-
-            boolean ok = crud.insertarPresupuesto(idPres, idUsu, nombre, anioIni, mesIni, anioFin, mesFin, usuarioActual());
-            if (ok) {
-                Estilo.mostrarInfo(this, "Presupuesto registrado correctamente.");
-                limpiarInsertar();
-            } else {
-                Estilo.mostrarError(this, "No se pudo registrar el presupuesto.");
+        int orden = 0;
+        if (!ordenStr.isEmpty()) {
+            try {
+                orden = Integer.parseInt(ordenStr);
+            } catch (NumberFormatException e) {
+                Estilo.mostrarAviso(this, "El orden debe ser un número entero.");
+                return;
             }
-        } catch (NumberFormatException e) {
-            Estilo.mostrarAviso(this, "Los años y meses deben ser números enteros.");
+        }
+
+        boolean ok = crud.insertarCategoria(idCat, nombre, desc, tipo, orden, usuarioActual());
+        if (ok) {
+            Estilo.mostrarInfo(this, "Categoría registrada correctamente.");
+            limpiarInsertar();
+        } else {
+            Estilo.mostrarError(this, "No se pudo registrar la categoría.");
         }
     }
 
     private void limpiarInsertar() {
-        txtIdPresupuestoInsertar.setText("");
-        txtIdUsuarioInsertar.setText("");
+        txtIdCategoriaInsertar.setText("");
         txtNombreInsertar.setText("");
-        txtAnioInicioInsertar.setText("");
-        txtMesInicioInsertar.setText("");
-        txtAnioFinInsertar.setText("");
-        txtMesFinInsertar.setText("");
+        txtDescripcionInsertar.setText("");
+        txtTipoCategoriaInsertar.setText("");
+        txtOrdenInsertar.setText("");
     }
 
     private JPanel crearTabActualizar() {
-        txtIdPresupuestoActualizar = Estilo.crearCampo();
-        txtIdPresupuestoActualizar.setPreferredSize(new Dimension(240, 40));
+        txtIdCategoriaActualizar = Estilo.crearCampo();
+        txtIdCategoriaActualizar.setPreferredSize(new Dimension(240, 40));
+        txtIdCategoriaActualizar.addActionListener(e -> cargarParaActualizar());
         
         txtNombreActualizar = Estilo.crearCampo();
-        txtAnioInicioActualizar = Estilo.crearCampo();
-        txtMesInicioActualizar = Estilo.crearCampo();
-        txtAnioFinActualizar = Estilo.crearCampo();
-        txtMesFinActualizar = Estilo.crearCampo();
-        txtEstadoActualizar = Estilo.crearCampo();
+        txtDescripcionActualizar = Estilo.crearCampo();
+        txtTipoCategoriaActualizar = Estilo.crearCampo();
+        txtOrdenActualizar = Estilo.crearCampo();
 
-        JPanel form = new JPanel(new GridLayout(3, 2, 20, 14));
+        JPanel form = new JPanel(new GridLayout(2, 2, 20, 14));
         form.setOpaque(false);
         form.add(Estilo.crearGrupo("Nombre", txtNombreActualizar));
-        form.add(Estilo.crearGrupo("Estado", txtEstadoActualizar));
-        form.add(Estilo.crearGrupo("Año Inicio", txtAnioInicioActualizar));
-        form.add(Estilo.crearGrupo("Mes Inicio", txtMesInicioActualizar));
-        form.add(Estilo.crearGrupo("Año Fin", txtAnioFinActualizar));
-        form.add(Estilo.crearGrupo("Mes Fin", txtMesFinActualizar));
+        form.add(Estilo.crearGrupo("Tipo (Ej. Gasto/Ingreso/Ahorro)", txtTipoCategoriaActualizar));
+        form.add(Estilo.crearGrupo("Descripción", txtDescripcionActualizar));
+        form.add(Estilo.crearGrupo("Orden (Número)", txtOrdenActualizar));
 
         JPanel superior = new JPanel(new BorderLayout(0, 18));
         superior.setOpaque(false);
-        superior.add(crearFilaBusqueda("ID Presupuesto", txtIdPresupuestoActualizar, new JLabel(" ")),
+        superior.add(crearFilaBusqueda("ID Categoría", txtIdCategoriaActualizar, Estilo.botonSecundario("Cargar datos", this::cargarParaActualizar)),
                 BorderLayout.NORTH);
         superior.add(form, BorderLayout.CENTER);
 
@@ -385,47 +372,75 @@ public class presupuestoFrame extends JPanel {
 
         return crearFormulario(superior, botones);
     }
+    
+    private void cargarParaActualizar() {
+        String id = txtIdCategoriaActualizar.getText().trim();
+        if (id.isEmpty()) {
+            Estilo.mostrarAviso(this, "Ingresa el ID de la categoría a actualizar.");
+            return;
+        }
+        
+        
+        
+        ArrayList<String> lista = crud.listarCategorias("");
+        boolean found = false;
+        for (String fila : lista) {
+            String[] datos = fila.split(",", -1);
+            if (datos.length >= 3 && datos[0].equals(id)) {
+                txtNombreActualizar.setText(datos[1]);
+                txtTipoCategoriaActualizar.setText(datos[2]);
+                txtDescripcionActualizar.setText(datos.length > 3 ? datos[3] : "");
+                txtOrdenActualizar.setText(datos.length > 4 ? datos[4] : "");
+                found = true;
+                break;
+            }
+        }
+        
+        if (!found) {
+            Estilo.mostrarAviso(this, "No se encontró la categoría con ID: " + id);
+        }
+    }
 
     private void actualizar() {
-        String idPres = txtIdPresupuestoActualizar.getText().trim();
+        String idCat = txtIdCategoriaActualizar.getText().trim();
         String nombre = txtNombreActualizar.getText().trim();
-        String anioIniStr = txtAnioInicioActualizar.getText().trim();
-        String mesIniStr = txtMesInicioActualizar.getText().trim();
-        String anioFinStr = txtAnioFinActualizar.getText().trim();
-        String mesFinStr = txtMesFinActualizar.getText().trim();
-        String estado = txtEstadoActualizar.getText().trim();
+        String desc = txtDescripcionActualizar.getText().trim();
+        String tipo = txtTipoCategoriaActualizar.getText().trim();
+        String ordenStr = txtOrdenActualizar.getText().trim();
 
-        if (idPres.isEmpty() || nombre.isEmpty() || estado.isEmpty()) {
-            Estilo.mostrarAviso(this, "Completa los campos obligatorios.");
+        if (idCat.isEmpty() || nombre.isEmpty() || tipo.isEmpty()) {
+            Estilo.mostrarAviso(this, "Completa los campos obligatorios (ID, Nombre, Tipo).");
             return;
         }
 
-        try {
-            int anioIni = Integer.parseInt(anioIniStr);
-            int mesIni = Integer.parseInt(mesIniStr);
-            int anioFin = Integer.parseInt(anioFinStr);
-            int mesFin = Integer.parseInt(mesFinStr);
-
-            boolean ok = crud.actualizarPresupuesto(idPres, nombre, anioIni, mesIni, anioFin, mesFin, estado, usuarioActual());
-            if (ok) {
-                Estilo.mostrarInfo(this, "Presupuesto actualizado correctamente.");
-                limpiarActualizar();
-            } else {
-                Estilo.mostrarError(this, "No se pudo actualizar el presupuesto.");
+        int orden = 0;
+        if (!ordenStr.isEmpty()) {
+            try {
+                orden = Integer.parseInt(ordenStr);
+            } catch (NumberFormatException e) {
+                Estilo.mostrarAviso(this, "El orden debe ser un número entero.");
+                return;
             }
-        } catch (NumberFormatException e) {
-            Estilo.mostrarAviso(this, "Los años y meses deben ser números enteros.");
+        }
+
+        boolean ok = crud.actualizarCategoria(idCat, nombre, desc, tipo, orden, usuarioActual());
+        if (ok) {
+            Estilo.mostrarInfo(this, "Categoría actualizada correctamente.");
+            limpiarActualizar();
+            if (!txtTipoCategoriaListar.getText().isEmpty() || modeloListar.getRowCount() > 0) {
+                cargarLista();
+            }
+        } else {
+            Estilo.mostrarError(this, "No se pudo actualizar la categoría.");
         }
     }
 
     private void limpiarActualizar() {
-        txtIdPresupuestoActualizar.setText("");
+        txtIdCategoriaActualizar.setText("");
         txtNombreActualizar.setText("");
-        txtAnioInicioActualizar.setText("");
-        txtMesInicioActualizar.setText("");
-        txtAnioFinActualizar.setText("");
-        txtMesFinActualizar.setText("");
-        txtEstadoActualizar.setText("");
+        txtDescripcionActualizar.setText("");
+        txtTipoCategoriaActualizar.setText("");
+        txtOrdenActualizar.setText("");
     }
 
     private JPanel crearTabEliminar() {
@@ -436,10 +451,10 @@ public class presupuestoFrame extends JPanel {
         txtIdEliminar.setPreferredSize(new Dimension(240, 40));
         txtIdEliminar.addActionListener(e -> eliminar());
 
-        panel.add(crearFilaBusqueda("ID Presupuesto", txtIdEliminar, Estilo.botonPeligro("Eliminar", this::eliminar)),
+        panel.add(crearFilaBusqueda("ID Categoría", txtIdEliminar, Estilo.botonPeligro("Eliminar", this::eliminar)),
                 BorderLayout.NORTH);
 
-        JLabel aviso = new JLabel("Escribe el ID del presupuesto que quieres eliminar.");
+        JLabel aviso = new JLabel("Escribe el ID de la categoría que quieres eliminar.");
         aviso.setFont(Estilo.fuente(Font.PLAIN, 13));
         aviso.setForeground(Tema.textoSecundario());
         aviso.setVerticalAlignment(SwingConstants.TOP);
@@ -451,27 +466,27 @@ public class presupuestoFrame extends JPanel {
     private void eliminar() {
         String id = txtIdEliminar.getText().trim();
         if (id.isEmpty()) {
-            Estilo.mostrarAviso(this, "Ingresa el ID del presupuesto.");
+            Estilo.mostrarAviso(this, "Ingresa el ID de la categoría.");
             return;
         }
 
         boolean confirmado = Estilo.confirmar(this,
-                "¿Seguro que quieres eliminar el presupuesto con ID: " + id + "?",
+                "¿Seguro que quieres eliminar la categoría con ID: " + id + "?",
                 "Confirmar",
                 "Sí, eliminar");
         if (!confirmado) {
             return;
         }
 
-        boolean ok = crud.eliminarPresupuesto(id);
+        boolean ok = crud.eliminarCategoria(id);
         if (ok) {
-            Estilo.mostrarInfo(this, "Presupuesto eliminado correctamente.");
+            Estilo.mostrarInfo(this, "Categoría eliminada correctamente.");
             txtIdEliminar.setText("");
-            if (!txtIdUsuarioListar.getText().isEmpty()) {
+            if (modeloListar.getRowCount() > 0) {
                 cargarLista();
             }
         } else {
-            Estilo.mostrarError(this, "No se pudo eliminar el presupuesto.");
+            Estilo.mostrarError(this, "No se pudo eliminar la categoría.");
         }
     }
 
