@@ -1,123 +1,256 @@
 package dev.presupuesto.frontend.frames;
 
-import dev.presupuesto.backend.operaciones.Reporteria;
 import dev.presupuesto.frontend.utils.Estilo;
 import dev.presupuesto.frontend.utils.Tema;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Locale;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
 
 public class reporteriaFrame extends JPanel {
 
-    private Reporteria rp = new Reporteria();
+    private static final String CARD_MENU = "MenuReportes";
+    private static final String CARD_RESUMEN = "Resumen";
+    private static final String CARD_DISTRIBUCION = "Distribucion";
+    private static final String CARD_CUMPLIMIENTO = "Cumplimiento";
+    private static final String CARD_OBLIGACIONES = "Obligaciones";
+
+    private enum IconoReporte {
+        RESUMEN, DISTRIBUCION, CUMPLIMIENTO, OBLIGACIONES
+    }
+
     private hubFrame ventanaPrincipal;
 
-    private JTextField txtFechaInicio, txtFechaFin;
-    private DefaultTableModel modeloTabla;
-    private JTable tablaReporte;
-    
-    // Aquí después agregaremos el panel para el gráfico de JFreeChart
+    private CardLayout cardReportes;
+    private JPanel panelReportes;
 
     public reporteriaFrame(hubFrame ventana) {
         this.ventanaPrincipal = ventana;
         setLayout(new BorderLayout());
         setBackground(Tema.fondoPrincipal());
-        setBorder(BorderFactory.createEmptyBorder(28, 36, 24, 36));
 
-        add(Estilo.crearEncabezado(
+        cardReportes = new CardLayout();
+        panelReportes = new JPanel(cardReportes);
+        panelReportes.setOpaque(false);
+
+        panelReportes.add(crearMenuReportes(), CARD_MENU);
+        panelReportes.add(new reporteResumenMensualFrame(this), CARD_RESUMEN);
+        panelReportes.add(new reporteDistribucionGastosFrame(this), CARD_DISTRIBUCION);
+        panelReportes.add(new reportePendienteFrame(this,
+                "Reporte 3: Análisis de Cumplimiento de Presupuesto por Categoría y Subcategoría",
+                "Comparar el presupuesto asignado vs el monto realmente gastado a nivel de categoría y subcategoría, identificando desviaciones."),
+                CARD_CUMPLIMIENTO);
+        panelReportes.add(new reportePendienteFrame(this,
+                "Reporte 4: Estado de Obligaciones Fijas y Cumplimiento de Pagos",
+                "Monitorear el cumplimiento de pago de las obligaciones fijas mensuales."),
+                CARD_OBLIGACIONES);
+
+        add(panelReportes, BorderLayout.CENTER);
+        cardReportes.show(panelReportes, CARD_MENU);
+    }
+
+    public hubFrame getVentanaPrincipal() {
+        return ventanaPrincipal;
+    }
+
+    // Punto de entrada público para que los sub-frames regresen al menú de reportes
+    public void volverAlMenu() {
+        cardReportes.show(panelReportes, CARD_MENU);
+    }
+
+    private void mostrarReporte(String card) {
+        cardReportes.show(panelReportes, card);
+    }
+
+
+    private JPanel crearMenuReportes() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setOpaque(false);
+        panel.setBackground(Tema.fondoPrincipal());
+        panel.setBorder(BorderFactory.createEmptyBorder(28, 36, 24, 36));
+
+        panel.add(Estilo.crearEncabezado(
                 "Reportería y Estadísticas",
-                "Analiza el balance financiero de tu presupuesto",
+                "Selecciona un reporte para continuar",
                 "←  Volver al menú",
-                () -> {
-                    ventanaPrincipal.mostrarPanel("Menu");
-                }), BorderLayout.NORTH);
+                () -> ventanaPrincipal.mostrarPanel("Menu")), BorderLayout.NORTH);
 
-        add(crearPanelReporte1(), BorderLayout.CENTER);
+        panel.add(crearSeccionReportes(), BorderLayout.CENTER);
+        return panel;
     }
 
-    private JPanel crearPanelReporte1() {
-        JPanel tarjeta = new JPanel(new BorderLayout(0, 16));
-        tarjeta.setBackground(Tema.fondoTarjeta());
-        tarjeta.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(Tema.borde(), 1),
-                BorderFactory.createEmptyBorder(20, 24, 20, 24)
-        ));
+    private JPanel crearSeccionReportes() {
+        JPanel seccion = new JPanel(new BorderLayout());
+        seccion.setOpaque(false);
 
-        // Filtros Superiores
-        JPanel panelFiltros = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 0));
-        panelFiltros.setOpaque(false);
-        
-        txtFechaInicio = Estilo.crearCampo();
-        txtFechaInicio.setPreferredSize(new Dimension(120, 40));
-        txtFechaInicio.setText("2024-01-01"); // Valor por defecto
+        JLabel labelReportes = new JLabel("REPORTES DISPONIBLES");
+        labelReportes.setFont(Estilo.fuente(Font.BOLD, 11));
+        labelReportes.setForeground(Tema.textoSecundario());
+        labelReportes.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+        seccion.add(labelReportes, BorderLayout.NORTH);
 
-        txtFechaFin = Estilo.crearCampo();
-        txtFechaFin.setPreferredSize(new Dimension(120, 40));
-        txtFechaFin.setText("2024-12-31"); // Valor por defecto
+        JPanel grid = new JPanel(new GridLayout(2, 2, 16, 16));
+        grid.setOpaque(false);
 
-        panelFiltros.add(Estilo.crearGrupo("Desde (AAAA-MM-DD)", txtFechaInicio));
-        panelFiltros.add(Estilo.crearGrupo("Hasta (AAAA-MM-DD)", txtFechaFin));
-        
-        JButton btnGenerar = Estilo.botonPrimario("Generar Reporte", this::cargarReporte);
-        // Ajustamos la altura del botón para que se alinee con los campos
-        JPanel contenedorBoton = new JPanel(new BorderLayout());
-        contenedorBoton.setOpaque(false);
-        contenedorBoton.setBorder(BorderFactory.createEmptyBorder(22, 0, 0, 0));
-        contenedorBoton.add(btnGenerar, BorderLayout.CENTER);
-        
-        panelFiltros.add(contenedorBoton);
+        grid.add(crearTarjeta("Resumen mensual", "Ingresos, gastos y ahorro por mes",
+                IconoReporte.RESUMEN, CARD_RESUMEN));
+        grid.add(crearTarjeta("Distribución de gastos", "Porcentaje del presupuesto por categoría",
+                IconoReporte.DISTRIBUCION, CARD_DISTRIBUCION));
+        grid.add(crearTarjeta("Cumplimiento de presupuesto", "Asignado vs. gastado por categoría",
+                IconoReporte.CUMPLIMIENTO, CARD_CUMPLIMIENTO));
+        grid.add(crearTarjeta("Obligaciones fijas", "Cumplimiento de pagos recurrentes",
+                IconoReporte.OBLIGACIONES, CARD_OBLIGACIONES));
 
-        // Tabla de Resultados
-        String[] columnas = {"Mes / Año", "Total Ingresos", "Total Gastos", "Balance Final"};
-        modeloTabla = new DefaultTableModel(columnas, 0) {
-            @Override public boolean isCellEditable(int row, int column) { return false; }
-        };
-        tablaReporte = new JTable(modeloTabla);
-        Estilo.estilizarTabla(tablaReporte);
-
-        tarjeta.add(panelFiltros, BorderLayout.NORTH);
-        tarjeta.add(Estilo.crearScroll(tablaReporte), BorderLayout.CENTER);
-        
-        // Más adelante, aquí en el SOUTH o en un SplitPane meteremos el Gráfico y el botón PDF
-
-        return tarjeta;
+        seccion.add(grid, BorderLayout.CENTER);
+        return seccion;
     }
 
-    private void cargarReporte() {
-        String fechaInicio = txtFechaInicio.getText().trim();
-        String fechaFin = txtFechaFin.getText().trim();
+    private TarjetaReporte crearTarjeta(String titulo, String descripcion, IconoReporte icono, String card) {
+        return new TarjetaReporte(titulo, descripcion, icono, () -> mostrarReporte(card));
+    }
 
-        if (fechaInicio.isEmpty() || fechaFin.isEmpty()) {
-            Estilo.mostrarAviso(this, "Ingresa las fechas de inicio y fin.");
-            return;
+
+    // ---------- Tarjeta visual (mismo estilo que TarjetaModulo del hub) ----------
+
+    private static class TarjetaReporte extends JPanel {
+
+        private static final int PADDING = 20;
+        private static final int TAM_ICONO = 40;
+
+        private final String titulo;
+        private final String descripcion;
+        private final IconoReporte icono;
+        private boolean hover = false;
+
+        TarjetaReporte(String titulo, String descripcion, IconoReporte icono, Runnable accion) {
+            this.titulo = titulo;
+            this.descripcion = descripcion;
+            this.icono = icono;
+
+            setOpaque(true);
+            setBackground(Tema.fondoTarjeta());
+            setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+            addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    hover = true;
+                    repaint();
+                }
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    hover = false;
+                    repaint();
+                }
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    if (SwingUtilities.isLeftMouseButton(e) && contains(e.getPoint())) {
+                        hover = false;
+                        repaint();
+                        accion.run();
+                    }
+                }
+            });
         }
 
-        modeloTabla.setRowCount(0);
-        ArrayList<String> datos = rp.reporteResumenMensual(ventanaPrincipal.getNombreCuenta(), fechaInicio, fechaFin);
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
 
-        if (datos != null && !datos.isEmpty()) {
-            for (String fila : datos) {
-                String[] columnas = fila.split(",", -1);
-                modeloTabla.addRow(new Object[]{
-                    columnas[0], 
-                    "L. " + formatearMonto(columnas[1]), 
-                    "L. " + formatearMonto(columnas[2]), 
-                    "L. " + formatearMonto(columnas[3])
-                });
+            int w = getWidth();
+            int h = getHeight();
+
+            g2.setColor(Tema.fondoTarjeta());
+            g2.fillRect(0, 0, w, h);
+            g2.setColor(hover ? Tema.boton() : Tema.borde());
+            g2.setStroke(new BasicStroke(1f));
+            g2.drawRect(0, 0, w - 1, h - 1);
+            if (hover) {
+                g2.fillRect(0, 0, w, 3);
             }
-        } else {
-            modeloTabla.addRow(new Object[]{"Sin datos", "-", "-", "-"});
-        }
-    }
 
-    private String formatearMonto(String bruto) {
-        try {
-            return String.format(Locale.US, "%,.2f", Double.parseDouble(bruto.trim()));
-        } catch (NumberFormatException e) {
-            return bruto;
+            Font fuenteTitulo = Estilo.fuente(Font.BOLD, 14);
+            Font fuenteDescripcion = Estilo.fuente(Font.PLAIN, 12);
+            FontMetrics fmTitulo = g2.getFontMetrics(fuenteTitulo);
+            FontMetrics fmDesc = g2.getFontMetrics(fuenteDescripcion);
+
+            int separacion = 14;
+            int bloque = TAM_ICONO + separacion + fmTitulo.getHeight() + 2 + fmDesc.getHeight();
+            int y = (h - bloque) / 2;
+            int anchoTexto = w - PADDING * 2;
+
+            g2.setColor(hover ? Tema.boton() : Tema.acentoSuave());
+            g2.fillRect(PADDING, y, TAM_ICONO, TAM_ICONO);
+            dibujarIcono(g2, icono, PADDING + TAM_ICONO / 2.0, y + TAM_ICONO / 2.0,
+                    hover ? Color.WHITE : Tema.boton());
+
+            int yTitulo = y + TAM_ICONO + separacion;
+            g2.setFont(fuenteTitulo);
+            g2.setColor(Tema.textoPrimario());
+            g2.drawString(ajustarTexto(titulo, fmTitulo, anchoTexto), PADDING, yTitulo + fmTitulo.getAscent());
+
+            int yDesc = yTitulo + fmTitulo.getHeight() + 2;
+            g2.setFont(fuenteDescripcion);
+            g2.setColor(Tema.textoSecundario());
+            g2.drawString(ajustarTexto(descripcion, fmDesc, anchoTexto), PADDING, yDesc + fmDesc.getAscent());
+
+            g2.dispose();
+        }
+
+        private static String ajustarTexto(String texto, FontMetrics fm, int anchoMax) {
+            if (fm.stringWidth(texto) <= anchoMax) {
+                return texto;
+            }
+            String elipsis = "…";
+            int fin = texto.length();
+            while (fin > 0 && fm.stringWidth(texto.substring(0, fin) + elipsis) > anchoMax) {
+                fin--;
+            }
+            return texto.substring(0, fin) + elipsis;
+        }
+
+        private static void dibujarIcono(Graphics2D g2, IconoReporte icono, double cx, double cy, Color color) {
+            g2.setColor(color);
+            g2.setStroke(new BasicStroke(1.8f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+
+            switch (icono) {
+                case RESUMEN:
+                    g2.draw(new Line2D.Double(cx - 9, cy + 9, cx + 9, cy + 9));
+                    g2.draw(new Line2D.Double(cx - 9, cy - 9, cx - 9, cy + 9));
+                    g2.draw(new Rectangle2D.Double(cx - 5, cy + 2, 3, 7));
+                    g2.draw(new Rectangle2D.Double(cx - 1, cy - 3, 3, 12));
+                    g2.draw(new Rectangle2D.Double(cx + 3, cy - 7, 3, 16));
+                    break;
+
+                case DISTRIBUCION:
+                    g2.draw(new Ellipse2D.Double(cx - 9, cy - 9, 18, 18));
+                    g2.draw(new Line2D.Double(cx, cy, cx, cy - 9));
+                    g2.draw(new Line2D.Double(cx, cy, cx + 8, cy + 4));
+                    g2.draw(new Line2D.Double(cx, cy, cx - 7, cy + 5));
+                    break;
+
+                case CUMPLIMIENTO:
+                    g2.draw(new Line2D.Double(cx - 9, cy + 9, cx + 9, cy + 9));
+                    g2.draw(new Rectangle2D.Double(cx - 7, cy - 1, 5, 10));
+                    g2.draw(new Rectangle2D.Double(cx + 2, cy - 6, 5, 15));
+                    g2.draw(new Line2D.Double(cx - 2, cy - 9, cx, cy - 6));
+                    g2.draw(new Line2D.Double(cx, cy - 6, cx + 5, cy - 12));
+                    break;
+
+                case OBLIGACIONES:
+                    g2.draw(new Rectangle2D.Double(cx - 9, cy - 7, 18, 16));
+                    g2.draw(new Line2D.Double(cx - 9, cy - 2, cx + 9, cy - 2));
+                    g2.draw(new Line2D.Double(cx - 4, cy - 10, cx - 4, cy - 5));
+                    g2.draw(new Line2D.Double(cx + 4, cy - 10, cx + 4, cy - 5));
+                    break;
+            }
         }
     }
 }
