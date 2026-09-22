@@ -88,11 +88,15 @@ public class CrudObligacionFija {
             
             if(rs.next()){
                 resultado = "ID Obligación: " + rs.getString("id_obligacion") + "\n" +
+                            "ID Subcategoría: " + rs.getString("id_subcategoria") + "\n" +
                             "Obligacion: " + rs.getString("nombre") + "\n" +
+                            "Descripción: " + rs.getString("descripcion") + "\n" +
                             "Subcategoría: " + rs.getString("nombre_subcategoria") + "\n" +
                             "Monto: L." + rs.getDouble("monto_mensual") + "\n" +
                             "Vence dia: " + rs.getInt("dia_vencimiento") + "\n" +
-                            "Vigente: " + (rs.getBoolean("es_vigente") ? "Sí" : "No");
+                            "Fecha Inicio: " + rs.getTimestamp("fecha_inicio") + "\n" +
+                            "Fecha Fin: " + rs.getTimestamp("fecha_finalizacion") + "\n" +
+                            "Modificado por: " + rs.getString("modificado_por");
             }
         }catch(Exception e){
             System.err.println("[ERROR] No se pudo consultar: " + e.getMessage());

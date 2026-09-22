@@ -362,7 +362,21 @@ public class subcategoriaFrame extends JPanel {
             return;
         }
 
-        Estilo.mostrarInfo(this, "Subcategoría encontrada. Completa los campos a actualizar.");
+        try {
+            String[] lineas = resultado.split("\n");
+            
+            String nombre = lineas[1].substring("Nombre: ".length());
+            String desc = lineas[3].substring("Desc: ".length());
+            String activa = lineas[4].substring("Activa: ".length());
+
+            txtNombreActualizar.setText(nombre);
+            txtDescripcionActualizar.setText(desc);
+            txtActivaActualizar.setText(activa);
+
+        } catch (Exception e) {
+            Estilo.mostrarError(this, "Error al procesar los datos de la subcategoría.");
+        }
+        
         txtNombreActualizar.requestFocusInWindow();
     }
 

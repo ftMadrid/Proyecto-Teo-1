@@ -273,7 +273,9 @@ public class transaccionFrame extends JPanel {
                 Estilo.botonPrimario("Guardar transacción", this::insertar),
                 Estilo.botonSecundario("Limpiar", this::limpiarInsertar));
 
-        return Estilo.crearScroll(crearFormulario(form, botones));
+        JScrollPane scroll = Estilo.crearScroll(crearFormulario(form, botones));
+        scroll.setBorder(BorderFactory.createEmptyBorder());
+        return scroll;
     }
 
     private void insertar() {
@@ -372,7 +374,9 @@ public class transaccionFrame extends JPanel {
                 Estilo.botonPrimario("Guardar Cambios", this::actualizar),
                 Estilo.botonSecundario("Limpiar", this::limpiarActualizar));
 
-        return Estilo.crearScroll(crearFormulario(contenedorSuperior, botones));
+        JScrollPane scroll = Estilo.crearScroll(crearFormulario(contenedorSuperior, botones));
+        scroll.setBorder(BorderFactory.createEmptyBorder());
+        return scroll;
     }
 
     private void cargarParaActualizar() {
@@ -388,7 +392,30 @@ public class transaccionFrame extends JPanel {
             return;
         }
 
-        Estilo.mostrarInfo(this, "Transacción encontrada en la base de datos. Completa los campos a actualizar.");
+        try {
+            String[] lineas = resultado.split("\n");
+            String tipo = lineas[1].substring("Tipo: ".length());
+            String monto = lineas[2].substring("Monto: L. ".length());
+            String fechaCompleta = lineas[3].substring("Fecha: ".length());
+            String fecha = fechaCompleta.split(" ")[0]; // AAAA-MM-DD
+            String idSubcategoria = lineas[6].substring("ID Subcategoria: ".length());
+            String metodoPago = lineas[7].substring("Metodo Pago: ".length());
+            String descripcion = lineas[8].substring("Descripcion: ".length());
+            String factura = lineas[9].substring("Factura: ".length());
+            String observaciones = lineas[10].substring("Observaciones: ".length());
+
+            txtTipotransaccionActualizar.setText(tipo);
+            txtMontoActualizar.setText(monto);
+            txtFechaActualizar.setText(fecha);
+            txtIdsubcategoriaActualizar.setText(idSubcategoria);
+            txtMetodopagoActualizar.setText(metodoPago);
+            txtDescripcionActualizar.setText(descripcion);
+            txtNumerofacturaActualizar.setText(factura);
+            txtObservacionesActualizar.setText(observaciones);
+        } catch (Exception e) {
+            Estilo.mostrarError(this, "Error al procesar los datos.");
+        }
+        
         txtIdsubcategoriaActualizar.requestFocusInWindow();
     }
 

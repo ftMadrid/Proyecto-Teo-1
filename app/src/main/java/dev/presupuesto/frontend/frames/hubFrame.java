@@ -27,8 +27,6 @@ public class hubFrame extends JFrame {
     private CardLayout cardLayout;
     private JPanel panelContenedor;
     private String nombreCuenta;
-
-    
     private CardLayout cardPerfil;
     private JPanel contenidoPerfil;
     private JPanel barraLateralPerfil;
@@ -63,7 +61,7 @@ public class hubFrame extends JFrame {
         panelContenedor.add(new presupuestoDetalleFrame(this), "PresupuestoDetalle");
         panelContenedor.add(new obligacionFijaFrame(this), "ObligacionFija");
         panelContenedor.add(new transaccionFrame(this), "Transaccion");
-        panelContenedor.add(crearPanelPendiente("Reportería"), "Reporteria");
+        panelContenedor.add(new reporteriaFrame(this), "Reporteria");
         panelContenedor.add(crearPanelPerfil(), "Perfil");
     }
 
@@ -74,11 +72,6 @@ public class hubFrame extends JFrame {
         panelContenedor.revalidate();
         panelContenedor.repaint();
     }
-
-
-    
-    
-    
 
     private JPanel crearPanelMenu() {
         JPanel panel = new JPanel(new BorderLayout());
@@ -184,11 +177,6 @@ public class hubFrame extends JFrame {
     private TarjetaModulo crearTarjeta(String titulo, String descripcion, Icono icono, String nombrePanel) {
         return new TarjetaModulo(titulo, descripcion, icono, () -> mostrarPanel(nombrePanel));
     }
-
-
-    
-    
-    
 
     private JPanel crearPanelPerfil() {
         JPanel panel = new JPanel(new BorderLayout());

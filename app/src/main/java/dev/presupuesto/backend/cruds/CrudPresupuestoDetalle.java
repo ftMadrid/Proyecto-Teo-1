@@ -98,9 +98,9 @@ public class CrudPresupuestoDetalle {
             ResultSet rs = cs.executeQuery();
             
             while(rs.next()){
-                String fila = rs.getString("id_presupuesto_detalle") + "," + 
-                              rs.getString("nombre_subcategoria") + "," + 
-                              rs.getDouble("monto_mensual");
+                String fila = rs.getString("id_presupuesto_detalle") + " - " + 
+                              rs.getString("nombre_subcategoria") + " [L." + 
+                              rs.getDouble("monto_mensual") + "]";
                 lista.add(fila);
             }
         }catch(Exception e){

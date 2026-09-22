@@ -42,11 +42,11 @@ public class obligacionFijaFrame extends JPanel {
 
     private JTextField txtIdUsuarioInsertar, txtIdSubcategoriaInsertar, txtNombreInsertar,
             txtDescripcionInsertar, txtMontoMensualInsertar, txtDiaVencimientoInsertar,
-            txtFechaInicioInsertar, txtFechaFinInsertar, txtCreadoPorInsertar;
+            txtFechaInicioInsertar, txtFechaFinInsertar;
 
     private JTextField txtIdObligacionActualizar, txtIdSubcategoriaActualizar, txtNombreActualizar,
             txtDescripcionActualizar, txtMontoMensualActualizar, txtDiaVencimientoActualizar,
-            txtFechaInicioActualizar, txtFechaFinActualizar, txtModificadoPorActualizar;
+            txtFechaInicioActualizar, txtFechaFinActualizar;
 
     private JTextField txtIdEliminar;
 
@@ -67,7 +67,6 @@ public class obligacionFijaFrame extends JPanel {
 
         add(crearTarjetaPrincipal(), BorderLayout.CENTER);
     }
-
 
     private JPanel crearTarjetaPrincipal() {
         JPanel tarjeta = new JPanel(new BorderLayout());
@@ -152,7 +151,6 @@ public class obligacionFijaFrame extends JPanel {
         cardTabs.show(panelTabs, nombre);
     }
 
-
     // ---------- Consultar ----------
 
     private JPanel crearTabConsultar() {
@@ -192,7 +190,6 @@ public class obligacionFijaFrame extends JPanel {
             areaConsultar.setText("[!] No se encontro la obligacion con ID: " + id);
         }
     }
-
 
     // ---------- Listar ----------
 
@@ -344,7 +341,6 @@ public class obligacionFijaFrame extends JPanel {
         return valor == null ? "" : valor.toString();
     }
 
-
     // ---------- Insertar ----------
 
     private JComponent crearTabInsertar() {
@@ -356,26 +352,26 @@ public class obligacionFijaFrame extends JPanel {
         txtDiaVencimientoInsertar = Estilo.crearCampo();
         txtFechaInicioInsertar = Estilo.crearCampo();
         txtFechaFinInsertar = Estilo.crearCampo();
-        txtCreadoPorInsertar = Estilo.crearCampo();
 
-        JPanel form = new JPanel(new GridLayout(5, 2, 20, 14));
+        JPanel form = new JPanel(new GridLayout(4, 2, 20, 14));
         form.setOpaque(false);
         form.add(Estilo.crearGrupo("ID Usuario", txtIdUsuarioInsertar));
         form.add(Estilo.crearGrupo("ID Subcategoría", txtIdSubcategoriaInsertar));
         form.add(Estilo.crearGrupo("Nombre", txtNombreInsertar));
-        form.add(Estilo.crearGrupo("Descripción", txtDescripcionInsertar));
-        form.add(Estilo.crearGrupo("Monto mensual (L.)", txtMontoMensualInsertar));
-        form.add(Estilo.crearGrupo("Día vencimiento (1-31)", txtDiaVencimientoInsertar));
-        form.add(Estilo.crearGrupo("Fecha inicio (AAAA-MM-DD)", txtFechaInicioInsertar));
-        form.add(Estilo.crearGrupo("Fecha fin (AAAA-MM-DD)", txtFechaFinInsertar));
-        form.add(Estilo.crearGrupo("Creado por", txtCreadoPorInsertar));
-        form.add(new JLabel()); // Relleno para balancear la cuadrícula de 5x2
+        form.add(Estilo.crearGrupo("Monto (L.)", txtMontoMensualInsertar));
+        form.add(Estilo.crearGrupo("Día Vencimiento (1-31)", txtDiaVencimientoInsertar));
+        form.add(Estilo.crearGrupo("Fecha Inicio (yyyy-mm-dd)", txtFechaInicioInsertar));
+        form.add(Estilo.crearGrupo("Fecha Fin (yyyy-mm-dd)", txtFechaFinInsertar));
+        form.add(new JLabel());
+        form.add(new JLabel());
 
         JPanel botones = crearBotonera(
                 Estilo.botonPrimario("Guardar obligación", this::insertar),
                 Estilo.botonSecundario("Limpiar", this::limpiarInsertar));
 
-        return Estilo.crearScroll(crearFormulario(form, botones));
+        JScrollPane scroll = Estilo.crearScroll(crearFormulario(form, botones));
+        scroll.setBorder(BorderFactory.createEmptyBorder());
+        return scroll;
     }
 
     private void insertar() {
@@ -387,7 +383,7 @@ public class obligacionFijaFrame extends JPanel {
         String dia = txtDiaVencimientoInsertar.getText().trim();
         String fechaInicio = txtFechaInicioInsertar.getText().trim();
         String fechaFin = txtFechaFinInsertar.getText().trim();
-        String creadoPor = txtCreadoPorInsertar.getText().trim();
+        String creadoPor = usuarioActual();
 
         String error = validarDatosInsertar(idUsuario, idSubcategoria, nombre, monto, dia, fechaInicio, fechaFin, creadoPor);
         if (error != null) {
@@ -416,9 +412,8 @@ public class obligacionFijaFrame extends JPanel {
         txtDiaVencimientoInsertar.setText("");
         txtFechaInicioInsertar.setText("");
         txtFechaFinInsertar.setText("");
-        txtCreadoPorInsertar.setText("");
+        
     }
-
 
     // ---------- Actualizar ----------
 
@@ -434,7 +429,6 @@ public class obligacionFijaFrame extends JPanel {
         txtDiaVencimientoActualizar = Estilo.crearCampo();
         txtFechaInicioActualizar = Estilo.crearCampo();
         txtFechaFinActualizar = Estilo.crearCampo();
-        txtModificadoPorActualizar = Estilo.crearCampo();
 
         JPanel form = new JPanel(new GridLayout(4, 2, 20, 14));
         form.setOpaque(false);
@@ -445,9 +439,9 @@ public class obligacionFijaFrame extends JPanel {
         form.add(Estilo.crearGrupo("Día vencimiento (1-31)", txtDiaVencimientoActualizar));
         form.add(Estilo.crearGrupo("Fecha inicio (AAAA-MM-DD)", txtFechaInicioActualizar));
         form.add(Estilo.crearGrupo("Fecha fin (AAAA-MM-DD)", txtFechaFinActualizar));
-        form.add(Estilo.crearGrupo("Modificado por", txtModificadoPorActualizar));
+        form.add(new JLabel());
 
-        JLabel pista = new JLabel("\"Cargar datos\" solo trae Nombre, Monto y Día; completa Subcategoría, Descripción y Fechas.");
+        JLabel pista = new JLabel("\"Cargar datos\" completa todos los campos automáticamente.");
         pista.setFont(Estilo.fuente(Font.PLAIN, 12));
         pista.setForeground(Tema.textoSecundario());
         pista.setBorder(BorderFactory.createEmptyBorder(6, 0, 0, 0));
@@ -467,7 +461,9 @@ public class obligacionFijaFrame extends JPanel {
                 Estilo.botonPrimario("Guardar cambios", this::actualizar),
                 Estilo.botonSecundario("Limpiar", this::limpiarActualizar));
 
-        return Estilo.crearScroll(crearFormulario(contenedorSuperior, botones));
+        JScrollPane scroll = Estilo.crearScroll(crearFormulario(contenedorSuperior, botones));
+        scroll.setBorder(BorderFactory.createEmptyBorder());
+        return scroll;
     }
 
     private void cargarParaActualizar() {
@@ -483,13 +479,25 @@ public class obligacionFijaFrame extends JPanel {
             return;
         }
 
+        String idSubcat = extraerValor(resultado, "ID Subcategoría: ", "\n");
         String nombre = extraerValor(resultado, "Obligacion: ", "\n");
+        String descripcion = extraerValor(resultado, "Descripción: ", "\n");
         String monto = extraerValor(resultado, "Monto: L.", "\n");
         String dia = extraerValor(resultado, "Vence dia: ", "\n");
+        String fechaInicioFull = extraerValor(resultado, "Fecha Inicio: ", "\n");
+        String fechaFinFull = extraerValor(resultado, "Fecha Fin: ", "\n");
 
+        String fechaInicio = fechaInicioFull.length() >= 10 ? fechaInicioFull.substring(0, 10) : fechaInicioFull;
+        String fechaFin = fechaFinFull.length() >= 10 ? fechaFinFull.substring(0, 10) : fechaFinFull;
+
+        txtIdSubcategoriaActualizar.setText(idSubcat);
         txtNombreActualizar.setText(nombre);
+        txtDescripcionActualizar.setText(descripcion);
         txtMontoMensualActualizar.setText(montoPlano(monto));
         txtDiaVencimientoActualizar.setText(dia);
+        txtFechaInicioActualizar.setText(fechaInicio);
+        txtFechaFinActualizar.setText(fechaFin);
+
         txtNombreActualizar.requestFocusInWindow();
     }
 
@@ -502,7 +510,7 @@ public class obligacionFijaFrame extends JPanel {
         String dia = txtDiaVencimientoActualizar.getText().trim();
         String fechaInicio = txtFechaInicioActualizar.getText().trim();
         String fechaFin = txtFechaFinActualizar.getText().trim();
-        String modificadoPor = txtModificadoPorActualizar.getText().trim();
+        String modificadoPor = usuarioActual();
 
         String error = validarDatosActualizar(id, idSubcategoria, nombre, monto, dia, fechaInicio, fechaFin, modificadoPor);
         if (error != null) {
@@ -536,9 +544,7 @@ public class obligacionFijaFrame extends JPanel {
         txtDiaVencimientoActualizar.setText("");
         txtFechaInicioActualizar.setText("");
         txtFechaFinActualizar.setText("");
-        txtModificadoPorActualizar.setText("");
     }
-
 
     // ---------- Eliminar ----------
 
@@ -591,7 +597,6 @@ public class obligacionFijaFrame extends JPanel {
             Estilo.mostrarError(this, "No se pudo eliminar la obligación. Revisa la consola para ver el detalle.");
         }
     }
-
 
     // ---------- Utilidades ----------
 
@@ -656,7 +661,7 @@ public class obligacionFijaFrame extends JPanel {
             return errorFechas;
         }
         if (modificadoPor.isEmpty()) {
-            return "El campo \"Modificado por\" es obligatorio.";
+            return "No se pudo identificar el usuario actual para la auditoría.";
         }
         return null;
     }

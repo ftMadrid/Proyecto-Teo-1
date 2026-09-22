@@ -100,7 +100,12 @@ public class CrudTransaccion {
                             "Monto: L. " + rs.getDouble("monto") + "\n" +
                             "Fecha: " + rs.getTimestamp("fecha") + "\n" +
                             "Presupuesto: " + presup + "\n" +
-                            "Subcategoría: " + subcat;
+                            "Subcategoría: " + subcat + "\n" +
+                            "ID Subcategoria: " + (rs.getString("id_subcategoria") != null ? rs.getString("id_subcategoria") : "") + "\n" +
+                            "Metodo Pago: " + (rs.getString("metodo_pago") != null ? rs.getString("metodo_pago") : "") + "\n" +
+                            "Descripcion: " + (rs.getString("descripcion") != null ? rs.getString("descripcion") : "") + "\n" +
+                            "Factura: " + (rs.getString("numero_factura") != null ? rs.getString("numero_factura") : "") + "\n" +
+                            "Observaciones: " + (rs.getString("observaciones") != null ? rs.getString("observaciones") : "");
             }
         }catch(Exception e){
             System.err.println("[ERROR] No se pudo consultar: " + e.getMessage());

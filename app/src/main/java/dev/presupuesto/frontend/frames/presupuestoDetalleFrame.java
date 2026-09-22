@@ -38,10 +38,10 @@ public class presupuestoDetalleFrame extends JPanel {
     private JTable tablaListar;
 
     private JTextField txtIdPresupuestoInsertar, txtIdSubcategoriaInsertar,
-            txtMontoMensualInsertar, txtObservacionesInsertar, txtCreadoPorInsertar;
+            txtMontoMensualInsertar, txtObservacionesInsertar;
 
     private JTextField txtIdDetalleActualizar, txtMontoMensualActualizar,
-            txtObservacionesActualizar, txtModificadoPorActualizar;
+            txtObservacionesActualizar;
 
     private JTextField txtIdEliminar;
 
@@ -268,15 +268,24 @@ public class presupuestoDetalleFrame extends JPanel {
     }
 
     private String[] parsearFilaListado(String fila) {
-        int separador = fila.indexOf(" - ");
-        int inicioMonto = fila.lastIndexOf(" [L.");
-        if (separador == -1 || inicioMonto == -1 || inicioMonto < separador) {
+        int idxSeparador = fila.indexOf(" - ");
+        if (idxSeparador == -1) {
             return null;
         }
+        String id = fila.substring(0, idxSeparador).trim();
+        String resto = fila.substring(idxSeparador + 3);
 
-        String id = fila.substring(0, separador).trim();
-        String subcategoria = fila.substring(separador + 3, inicioMonto).trim();
-        String monto = fila.substring(inicioMonto + 4).replace("]", "").trim();
+        int idxInicioMonto = resto.indexOf(" [L.");
+        if (idxInicioMonto == -1) {
+            return null;
+        }
+        String subcategoria = resto.substring(0, idxInicioMonto).trim();
+
+        String monto = resto.substring(idxInicioMonto + 4).trim();
+        if (monto.endsWith("]")) {
+            monto = monto.substring(0, monto.length() - 1);
+        }
+
         return new String[]{id, subcategoria, monto};
     }
 
@@ -296,6 +305,9 @@ public class presupuestoDetalleFrame extends JPanel {
         return valor == null ? "" : valor.toString();
     }
 
+    private String usuarioActual() {
+        return ventanaPrincipal.getNombreCuenta();
+    }
 
     // ---------- Insertar ----------
 
@@ -304,16 +316,13 @@ public class presupuestoDetalleFrame extends JPanel {
         txtIdSubcategoriaInsertar = Estilo.crearCampo();
         txtMontoMensualInsertar = Estilo.crearCampo();
         txtObservacionesInsertar = Estilo.crearCampo();
-        txtCreadoPorInsertar = Estilo.crearCampo();
 
-        JPanel form = new JPanel(new GridLayout(3, 2, 20, 14));
+        JPanel form = new JPanel(new GridLayout(2, 2, 20, 14));
         form.setOpaque(false);
         form.add(Estilo.crearGrupo("ID Presupuesto", txtIdPresupuestoInsertar));
         form.add(Estilo.crearGrupo("ID Subcategoría", txtIdSubcategoriaInsertar));
         form.add(Estilo.crearGrupo("Monto mensual (L.)", txtMontoMensualInsertar));
-        form.add(Estilo.crearGrupo("Creado por", txtCreadoPorInsertar));
         form.add(Estilo.crearGrupo("Observaciones", txtObservacionesInsertar));
-        form.add(new JLabel()); // Relleno para balancear la cuadrícula
 
         JPanel botones = crearBotonera(
                 Estilo.botonPrimario("Guardar detalle", this::insertar),
@@ -327,7 +336,7 @@ public class presupuestoDetalleFrame extends JPanel {
         String idSubcategoria = txtIdSubcategoriaInsertar.getText().trim();
         String monto = txtMontoMensualInsertar.getText().trim();
         String observaciones = txtObservacionesInsertar.getText().trim();
-        String creadoPor = txtCreadoPorInsertar.getText().trim();
+        String creadoPor = usuarioActual();
 
         String error = validarDatosInsertar(idPresupuesto, idSubcategoria, monto, creadoPor);
         if (error != null) {
@@ -351,7 +360,6 @@ public class presupuestoDetalleFrame extends JPanel {
         txtIdSubcategoriaInsertar.setText("");
         txtMontoMensualInsertar.setText("");
         txtObservacionesInsertar.setText("");
-        txtCreadoPorInsertar.setText("");
     }
 
 
@@ -364,14 +372,11 @@ public class presupuestoDetalleFrame extends JPanel {
 
         txtMontoMensualActualizar = Estilo.crearCampo();
         txtObservacionesActualizar = Estilo.crearCampo();
-        txtModificadoPorActualizar = Estilo.crearCampo();
 
-        JPanel form = new JPanel(new GridLayout(2, 2, 20, 14));
+        JPanel form = new JPanel(new GridLayout(1, 2, 20, 14));
         form.setOpaque(false);
         form.add(Estilo.crearGrupo("Monto mensual (L.)", txtMontoMensualActualizar));
         form.add(Estilo.crearGrupo("Observaciones", txtObservacionesActualizar));
-        form.add(Estilo.crearGrupo("Modificado por", txtModificadoPorActualizar));
-        form.add(new JLabel()); // Relleno para balancear la cuadrícula
 
         JPanel superior = new JPanel(new BorderLayout(0, 18));
         superior.setOpaque(false);
@@ -394,16 +399,22 @@ public class presupuestoDetalleFrame extends JPanel {
         }
 
         String resultado = crud.consultarPresupuestoDetalle(id);
-        if (resultado == null) {
+        if (resultado == null || resultado.isEmpty()) {
             Estilo.mostrarAviso(this, "No se encontro el detalle con ID: " + id);
             return;
         }
 
-        String monto = extraerValor(resultado, "Monto: L.", " | ");
-        String observaciones = extraerValor(resultado, "Observacion: ", null);
+        try {
+            String[] lineas = resultado.split("\n");
+            String monto = lineas[3].substring("Monto: L. ".length());
+            String observaciones = lineas[4].substring("Observación: ".length());
 
-        txtMontoMensualActualizar.setText(montoPlano(monto));
-        txtObservacionesActualizar.setText(observaciones);
+            txtMontoMensualActualizar.setText(montoPlano(monto));
+            txtObservacionesActualizar.setText(observaciones);
+        } catch (Exception e) {
+            Estilo.mostrarError(this, "Error al procesar los datos.");
+        }
+        
         txtMontoMensualActualizar.requestFocusInWindow();
     }
 
@@ -411,7 +422,7 @@ public class presupuestoDetalleFrame extends JPanel {
         String id = txtIdDetalleActualizar.getText().trim();
         String monto = txtMontoMensualActualizar.getText().trim();
         String observaciones = txtObservacionesActualizar.getText().trim();
-        String modificadoPor = txtModificadoPorActualizar.getText().trim();
+        String modificadoPor = usuarioActual();
 
         String error = validarDatosActualizar(id, monto, modificadoPor);
         if (error != null) {
@@ -438,7 +449,6 @@ public class presupuestoDetalleFrame extends JPanel {
         txtIdDetalleActualizar.setText("");
         txtMontoMensualActualizar.setText("");
         txtObservacionesActualizar.setText("");
-        txtModificadoPorActualizar.setText("");
     }
 
 

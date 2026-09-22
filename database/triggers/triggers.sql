@@ -253,8 +253,8 @@ CREATE OR REPLACE TRIGGER tr_obligacion_fija_generar_id
 BEFORE INSERT ON obligacion_fija
 FOR EACH ROW
 BEGIN
-    IF NEW.id_obligacion_fija IS NULL OR NEW.id_obligacion_fija = '' THEN
-        SET NEW.id_obligacion_fija = CONCAT('obf_', LPAD(NEXTVAL(seq_obligacion_fija), 2, '0'));
+    IF NEW.id_obligacion IS NULL OR NEW.id_obligacion = '' THEN
+        SET NEW.id_obligacion = CONCAT('obf_', LPAD(NEXTVAL(seq_obligacion_fija), 2, '0'));
     END IF;
 END $$
 DELIMITER ;

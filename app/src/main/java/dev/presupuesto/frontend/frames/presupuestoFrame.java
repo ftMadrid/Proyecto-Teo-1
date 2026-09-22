@@ -395,7 +395,34 @@ public class presupuestoFrame extends JPanel {
             return;
         }
 
-        Estilo.mostrarInfo(this, "Presupuesto encontrado. Completa los campos a actualizar.");
+        try {
+            String[] lineas = resultado.split("\n");
+            
+            String nombre = lineas[2].substring("Nombre: ".length());
+            
+            String inicio = lineas[3].substring("Inicio: ".length());
+            String[] inicioPartes = inicio.split("/");
+            String mesIni = inicioPartes[0];
+            String anioIni = inicioPartes[1];
+            
+            String fin = lineas[4].substring("Fin: ".length());
+            String[] finPartes = fin.split("/");
+            String mesFin = finPartes[0];
+            String anioFin = finPartes[1];
+            
+            String estado = lineas[5].substring("Estado: ".length());
+
+            txtNombreActualizar.setText(nombre);
+            txtMesInicioActualizar.setText(mesIni);
+            txtAnioInicioActualizar.setText(anioIni);
+            txtMesFinActualizar.setText(mesFin);
+            txtAnioFinActualizar.setText(anioFin);
+            txtEstadoActualizar.setText(estado);
+
+        } catch (Exception e) {
+            Estilo.mostrarError(this, "Error al procesar los datos del presupuesto.");
+        }
+        
         txtNombreActualizar.requestFocusInWindow();
     }
 
