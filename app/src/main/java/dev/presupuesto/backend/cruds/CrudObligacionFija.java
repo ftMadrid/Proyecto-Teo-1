@@ -12,7 +12,6 @@ import dev.presupuesto.conexiones.ConexionDB;
 public class CrudObligacionFija {
 
     public boolean insertarObligacion(String idObligacion, String idUsuario, String idSubcategoria, String nombre, String descripcion, double montoMensual, int diaVencimiento, String fechaInicio, String fechaFin, String creadoPor){
-        
         String query = "{CALL sp_insertar_obligacion(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
         
         try(Connection con = ConexionDB.obtenerConexion();
@@ -25,7 +24,7 @@ public class CrudObligacionFija {
             cs.setString(5, descripcion);
             cs.setDouble(6, montoMensual);
             cs.setInt(7, diaVencimiento);
-            cs.setTimestamp(8, Timestamp.valueOf(fechaInicio)); // solo para dar formato "YYYY-MM-DD HH:MM:SS"
+            cs.setTimestamp(8, Timestamp.valueOf(fechaInicio)); 
             cs.setTimestamp(9, Timestamp.valueOf(fechaFin));
             cs.setString(10, creadoPor);
             cs.execute();
@@ -38,7 +37,6 @@ public class CrudObligacionFija {
     }
 
     public boolean actualizarObligacion(String idObligacion, String idSubcategoria, String nombre, String descripcion, double montoMensual, int diaVencimiento, String fechaInicio, String fechaFin, String modificadoPor){
-        
         String query = "{CALL sp_actualizar_obligacion(?, ?, ?, ?, ?, ?, ?, ?, ?)}";
         
         try(Connection con = ConexionDB.obtenerConexion();
@@ -63,7 +61,6 @@ public class CrudObligacionFija {
     }
 
     public boolean eliminarObligacion(String idObligacion, String modificadoPor){
-        
         String query = "{CALL sp_eliminar_obligacion(?, ?)}";
         
         try(Connection con = ConexionDB.obtenerConexion();
@@ -81,7 +78,6 @@ public class CrudObligacionFija {
     }
     
     public String consultarObligacion(String idObligacion){
-        
         String query = "{CALL sp_consultar_obligacion(?)}";
         String resultado = null;
         
@@ -92,12 +88,12 @@ public class CrudObligacionFija {
             ResultSet rs = cs.executeQuery();
             
             if(rs.next()){
-                resultado = "| ID-Obligacion: " + rs.getString("id_obligacion") +
-                            " | Obligacion: " + rs.getString("nombre") + 
-                            " | Subcategoria: " + rs.getString("nombre_subcategoria") + 
-                            " | Monto: L." + rs.getDouble("monto_mensual") + 
-                            " | Vence dia: " + rs.getInt("dia_vencimiento") +
-                            " | Vigente: " + (rs.getBoolean("es_vigente") ? "Si" : "No");
+                resultado = "ID Obligación: " + rs.getString("id_obligacion") + "\n" +
+                            "Obligacion: " + rs.getString("nombre") + "\n" +
+                            "Subcategoría: " + rs.getString("nombre_subcategoria") + "\n" +
+                            "Monto: L." + rs.getDouble("monto_mensual") + "\n" +
+                            "Vence dia: " + rs.getInt("dia_vencimiento") + "\n" +
+                            "Vigente: " + (rs.getBoolean("es_vigente") ? "Sí" : "No");
             }
         }catch(Exception e){
             System.err.println("[ERROR] No se pudo consultar: " + e.getMessage());
@@ -106,7 +102,6 @@ public class CrudObligacionFija {
     }
 
     public ArrayList<String> listarObligacionesUsuario(String idUsuario, Boolean esVigente){
-        
         String query = "{CALL sp_listar_obligaciones_usuario(?, ?)}";
         ArrayList<String> lista = new ArrayList<>();
         
@@ -133,5 +128,4 @@ public class CrudObligacionFija {
         }
         return lista;
     }
-    
 }

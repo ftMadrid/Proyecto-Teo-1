@@ -12,7 +12,6 @@ import dev.presupuesto.conexiones.ConexionDB;
 public class CrudTransaccion {
 
     public boolean insertarTransaccion(String idTransaccion, String idUsuario, String idPresupuesto, int anio, int mes, String idSubcategoria, String idObligacion, String tipo, String descripcion, double monto, String fecha, String metodoPago, String numeroFactura, String observaciones, String creadoPor){
-        
         String query = "{CALL sp_insertar_transaccion(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
         
         try(Connection con = ConexionDB.obtenerConexion();
@@ -28,7 +27,7 @@ public class CrudTransaccion {
             cs.setString(8, tipo);
             cs.setString(9, descripcion);
             cs.setDouble(10, monto);
-            cs.setTimestamp(11, Timestamp.valueOf(fecha)); // aplicado lo mismo que en el de obligacion fija
+            cs.setTimestamp(11, Timestamp.valueOf(fecha.length() == 10 ? fecha + " 00:00:00" : fecha)); 
             cs.setString(12, metodoPago);
             cs.setString(13, numeroFactura);
             cs.setString(14, observaciones);
@@ -43,7 +42,6 @@ public class CrudTransaccion {
     }
 
     public boolean actualizarTransaccion(String idTransaccion, String idSubcategoria, String tipo, String descripcion, double monto, String fecha, String metodoPago, String numeroFactura, String observaciones, String modificadoPor){
-        
         String query = "{CALL sp_actualizar_transaccion(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
         
         try(Connection con = ConexionDB.obtenerConexion();
@@ -54,7 +52,7 @@ public class CrudTransaccion {
             cs.setString(3, tipo);
             cs.setString(4, descripcion);
             cs.setDouble(5, monto);
-            cs.setTimestamp(6, Timestamp.valueOf(fecha));
+            cs.setTimestamp(6, Timestamp.valueOf(fecha.length() == 10 ? fecha + " 00:00:00" : fecha));
             cs.setString(7, metodoPago);
             cs.setString(8, numeroFactura);
             cs.setString(9, observaciones);
@@ -69,7 +67,6 @@ public class CrudTransaccion {
     }
 
     public boolean eliminarTransaccion(String idTransaccion){
-        
         String query = "{CALL sp_eliminar_transaccion(?)}";
         
         try(Connection con = ConexionDB.obtenerConexion();
@@ -86,7 +83,6 @@ public class CrudTransaccion {
     }
     
     public String consultarTransaccion(String idTransaccion){
-        
         String query = "{CALL sp_consultar_transaccion(?)}";
         String resultado = null;
         
@@ -100,12 +96,12 @@ public class CrudTransaccion {
                 String presup = rs.getString("nombre_presupuesto") != null ? rs.getString("nombre_presupuesto") : "N/A";
                 String subcat = rs.getString("nombre_subcategoria") != null ? rs.getString("nombre_subcategoria") : "N/A";
                 
-                resultado = "| ID-Transaccion: " + rs.getString("id_transaccion") + 
-                            " | Tipo: " + rs.getString("tipo_transaccion") +
-                            " | Monto: L." + rs.getDouble("monto") + 
-                            " | Fecha: " + rs.getTimestamp("fecha") +
-                            " | Presupuesto: " + presup + 
-                            " | Subcategoria: " + subcat;
+                resultado = "ID Transacción: " + rs.getString("id_transaccion") + "\n" +
+                            "Tipo: " + rs.getString("tipo_transaccion") + "\n" +
+                            "Monto: L. " + rs.getDouble("monto") + "\n" +
+                            "Fecha: " + rs.getTimestamp("fecha") + "\n" +
+                            "Presupuesto: " + presup + "\n" +
+                            "Subcategoría: " + subcat;
             }
         }catch(Exception e){
             System.err.println("[ERROR] No se pudo consultar: " + e.getMessage());
@@ -114,7 +110,6 @@ public class CrudTransaccion {
     }
 
     public ArrayList<String> listarTransaccionesPresupuesto(String idPresupuesto, String tipoTransaccion){
-        
         String query = "{CALL sp_listar_transacciones_presupuesto(?, ?)}";
         ArrayList<String> lista = new ArrayList<>();
         
@@ -132,10 +127,13 @@ public class CrudTransaccion {
             ResultSet rs = cs.executeQuery();
             
             while(rs.next()){
-                String fila = rs.getTimestamp("fecha") + " | " + 
-                              rs.getString("tipo_transaccion") + " | " + 
-                              rs.getString("nombre_subcategoria") + " | L. " + 
-                              rs.getDouble("monto");
+                String fila = rs.getString("id_transaccion") + "," + 
+                              rs.getString("id_presupuesto") + "," + 
+                              rs.getString("id_subcategoria") + "," + 
+                              rs.getString("id_obligacion") + "," + 
+                              rs.getString("tipo_transaccion") + "," + 
+                              rs.getDouble("monto") + "," + 
+                              rs.getTimestamp("fecha");
                 lista.add(fila);
             }
         }catch(Exception e){
@@ -143,5 +141,4 @@ public class CrudTransaccion {
         }
         return lista;
     }
-    
 }

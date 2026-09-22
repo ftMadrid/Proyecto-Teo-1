@@ -10,7 +10,6 @@ import dev.presupuesto.conexiones.ConexionDB;
 public class CrudPresupuestoDetalle {
 
     public boolean insertarPresupuestoDetalle(String idDetalle, String idPresupuesto, String idSubcategoria, double monto, String observaciones, String creadoPor){
-        
         String query = "{CALL sp_insertar_presupuesto_detalle(?, ?, ?, ?, ?, ?)}";
         
         try(Connection con = ConexionDB.obtenerConexion();
@@ -32,7 +31,6 @@ public class CrudPresupuestoDetalle {
     }
 
     public boolean actualizarPresupuestoDetalle(String idDetalle, double monto, String observaciones, String modificadoPor){
-        
         String query = "{CALL sp_actualizar_presupuesto_detalle(?, ?, ?, ?)}";
         
         try(Connection con = ConexionDB.obtenerConexion();
@@ -52,7 +50,6 @@ public class CrudPresupuestoDetalle {
     }
 
     public boolean eliminarPresupuestoDetalle(String idDetalle){
-        
         String query = "{CALL sp_eliminar_presupuesto_detalle(?)}";
         
         try(Connection con = ConexionDB.obtenerConexion();
@@ -69,7 +66,6 @@ public class CrudPresupuestoDetalle {
     }
     
     public String consultarPresupuestoDetalle(String idDetalle){
-        
         String query = "{CALL sp_consultar_presupuesto_detalle(?)}";
         String resultado = null;
         
@@ -80,11 +76,11 @@ public class CrudPresupuestoDetalle {
             ResultSet rs = cs.executeQuery();
             
             if(rs.next()){
-                resultado = "| ID Detalle: " + rs.getString("id_presupuesto_detalle") +
-                            " | Categoria: " + rs.getString("nombre_categoria") + " (" + rs.getString("tipo_categoria") + ")" +
-                            " | Subcategoria: " + rs.getString("nombre_subcategoria") + 
-                            " | Monto: L." + rs.getDouble("monto_mensual") + 
-                            " | Observacion: " + rs.getString("observaciones_monto");
+                resultado = "ID Detalle: " + rs.getString("id_presupuesto_detalle") + "\n" +
+                            "Categoría: " + rs.getString("nombre_categoria") + " (" + rs.getString("tipo_categoria") + ")\n" +
+                            "Subcategoría: " + rs.getString("nombre_subcategoria") + "\n" +
+                            "Monto: L. " + rs.getDouble("monto_mensual") + "\n" +
+                            "Observación: " + rs.getString("observaciones_monto");
             }
         }catch(Exception e){
             System.err.println("[ERROR] No se pudo consultar: " + e.getMessage());
@@ -93,7 +89,6 @@ public class CrudPresupuestoDetalle {
     }
 
     public ArrayList<String> listarDetallesPresupuesto(String idPresupuesto){
-        
         String query = "{CALL sp_listar_detalles_presupuesto(?)}";
         ArrayList<String> lista = new ArrayList<>();
         
@@ -104,8 +99,9 @@ public class CrudPresupuestoDetalle {
             ResultSet rs = cs.executeQuery();
             
             while(rs.next()){
-                String fila = rs.getString("id_presupuesto_detalle") + " - " + 
-                              rs.getString("nombre_subcategoria") + " [L." + rs.getDouble("monto_mensual") + "]";
+                String fila = rs.getString("id_presupuesto_detalle") + "," + 
+                              rs.getString("nombre_subcategoria") + "," + 
+                              rs.getDouble("monto_mensual");
                 lista.add(fila);
             }
         }catch(Exception e){
@@ -113,5 +109,4 @@ public class CrudPresupuestoDetalle {
         }
         return lista;
     }
-    
 }

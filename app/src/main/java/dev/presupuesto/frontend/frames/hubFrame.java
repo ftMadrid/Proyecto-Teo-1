@@ -60,9 +60,9 @@ public class hubFrame extends JFrame {
         panelContenedor.add(new presupuestoFrame(this), "Presupuesto");
         panelContenedor.add(new categoriaFrame(this), "Categoria");
         panelContenedor.add(new subcategoriaFrame(this), "Subcategoria");
-        panelContenedor.add(crearPanelPendiente("Detalle de presupuesto"), "PresupuestoDetalle");
-        panelContenedor.add(crearPanelPendiente("Obligaciones fijas"), "ObligacionFija");
-        panelContenedor.add(crearPanelPendiente("Transacciones"), "Transaccion");
+        panelContenedor.add(new presupuestoDetalleFrame(this), "PresupuestoDetalle");
+        panelContenedor.add(new obligacionFijaFrame(this), "ObligacionFija");
+        panelContenedor.add(new transaccionFrame(this), "Transaccion");
         panelContenedor.add(crearPanelPendiente("Reportería"), "Reporteria");
         panelContenedor.add(crearPanelPerfil(), "Perfil");
     }
