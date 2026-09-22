@@ -36,10 +36,8 @@ public class subcategoriaFrame extends JPanel {
     private DefaultTableModel modeloListar;
     private JTable tablaListar;
 
-    private JTextField txtIdSubcategoriaInsertar, txtIdCategoriaInsertar, txtNombreInsertar, txtDescripcionInsertar;
-
+    private JTextField txtIdCategoriaInsertar, txtNombreInsertar, txtDescripcionInsertar;
     private JTextField txtIdSubcategoriaActualizar, txtNombreActualizar, txtDescripcionActualizar, txtActivaActualizar;
-
     private JTextField txtIdEliminar;
 
     public subcategoriaFrame(hubFrame ventana) {
@@ -280,17 +278,16 @@ public class subcategoriaFrame extends JPanel {
     }
 
     private JPanel crearTabInsertar() {
-        txtIdSubcategoriaInsertar = Estilo.crearCampo();
         txtIdCategoriaInsertar = Estilo.crearCampo();
         txtNombreInsertar = Estilo.crearCampo();
         txtDescripcionInsertar = Estilo.crearCampo();
 
         JPanel form = new JPanel(new GridLayout(2, 2, 20, 14));
         form.setOpaque(false);
-        form.add(Estilo.crearGrupo("ID Subcategoría", txtIdSubcategoriaInsertar));
         form.add(Estilo.crearGrupo("ID Categoría", txtIdCategoriaInsertar));
         form.add(Estilo.crearGrupo("Nombre", txtNombreInsertar));
         form.add(Estilo.crearGrupo("Descripción", txtDescripcionInsertar));
+        form.add(new JLabel()); // Relleno para que la cuadrícula no se descuadre
 
         JPanel botones = crearBotonera(
                 Estilo.botonPrimario("Guardar", this::insertar),
@@ -300,17 +297,16 @@ public class subcategoriaFrame extends JPanel {
     }
 
     private void insertar() {
-        String idSub = txtIdSubcategoriaInsertar.getText().trim();
         String idCat = txtIdCategoriaInsertar.getText().trim();
         String nombre = txtNombreInsertar.getText().trim();
         String desc = txtDescripcionInsertar.getText().trim();
 
-        if (idSub.isEmpty() || idCat.isEmpty() || nombre.isEmpty()) {
-            Estilo.mostrarAviso(this, "Completa los campos obligatorios (ID Subcategoría, ID Categoría, Nombre).");
+        if (idCat.isEmpty() || nombre.isEmpty()) {
+            Estilo.mostrarAviso(this, "Completa los campos obligatorios (ID Categoría, Nombre).");
             return;
         }
 
-        boolean ok = crud.insertarSubcategoria(idSub, idCat, nombre, desc, usuarioActual());
+        boolean ok = crud.insertarSubcategoria(idCat, nombre, desc, usuarioActual());
         if (ok) {
             Estilo.mostrarInfo(this, "Subcategoría registrada correctamente.");
             limpiarInsertar();
@@ -320,7 +316,6 @@ public class subcategoriaFrame extends JPanel {
     }
 
     private void limpiarInsertar() {
-        txtIdSubcategoriaInsertar.setText("");
         txtIdCategoriaInsertar.setText("");
         txtNombreInsertar.setText("");
         txtDescripcionInsertar.setText("");
@@ -329,6 +324,7 @@ public class subcategoriaFrame extends JPanel {
     private JPanel crearTabActualizar() {
         txtIdSubcategoriaActualizar = Estilo.crearCampo();
         txtIdSubcategoriaActualizar.setPreferredSize(new Dimension(240, 40));
+        txtIdSubcategoriaActualizar.addActionListener(e -> cargarParaActualizar());
         
         txtNombreActualizar = Estilo.crearCampo();
         txtDescripcionActualizar = Estilo.crearCampo();
@@ -342,10 +338,7 @@ public class subcategoriaFrame extends JPanel {
 
         JPanel superior = new JPanel(new BorderLayout(0, 18));
         superior.setOpaque(false);
-        
-        
-        
-        superior.add(crearFilaBusqueda("ID Subcategoría", txtIdSubcategoriaActualizar, new JLabel("")),
+        superior.add(crearFilaBusqueda("ID Subcategoría", txtIdSubcategoriaActualizar, Estilo.botonSecundario("Cargar datos", this::cargarParaActualizar)),
                 BorderLayout.NORTH);
         superior.add(form, BorderLayout.CENTER);
 
@@ -354,6 +347,23 @@ public class subcategoriaFrame extends JPanel {
                 Estilo.botonSecundario("Limpiar", this::limpiarActualizar));
 
         return crearFormulario(superior, botones);
+    }
+
+    private void cargarParaActualizar() {
+        String id = txtIdSubcategoriaActualizar.getText().trim();
+        if (id.isEmpty()) {
+            Estilo.mostrarAviso(this, "Ingresa el ID de la subcategoría a actualizar.");
+            return;
+        }
+
+        String resultado = crud.consultarSubcategoria(id);
+        if (resultado == null || resultado.isEmpty()) {
+            Estilo.mostrarAviso(this, "No se encontró la subcategoría con ID: " + id);
+            return;
+        }
+
+        Estilo.mostrarInfo(this, "Subcategoría encontrada. Completa los campos a actualizar.");
+        txtNombreActualizar.requestFocusInWindow();
     }
 
     private void actualizar() {

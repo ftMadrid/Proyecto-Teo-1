@@ -36,10 +36,9 @@ public class categoriaFrame extends JPanel {
     private DefaultTableModel modeloListar;
     private JTable tablaListar;
 
-    private JTextField txtIdCategoriaInsertar, txtNombreInsertar, txtDescripcionInsertar, txtTipoCategoriaInsertar, txtOrdenInsertar;
-
+    // Se eliminó el txtIdCategoriaInsertar de aquí
+    private JTextField txtNombreInsertar, txtDescripcionInsertar, txtTipoCategoriaInsertar, txtOrdenInsertar;
     private JTextField txtIdCategoriaActualizar, txtNombreActualizar, txtDescripcionActualizar, txtTipoCategoriaActualizar, txtOrdenActualizar;
-
     private JTextField txtIdEliminar;
 
     public categoriaFrame(hubFrame ventana) {
@@ -237,7 +236,6 @@ public class categoriaFrame extends JPanel {
     private void cargarLista() {
         String tipo = txtTipoCategoriaListar.getText().trim();
         
-
         modeloListar.setRowCount(0);
         ArrayList<String> lista = crud.listarCategorias(tipo);
 
@@ -245,15 +243,12 @@ public class categoriaFrame extends JPanel {
             for (String fila : lista) {
                 String[] datos = fila.split(",", -1);
                 if (datos.length >= 3) {
-                    
-                    
                     String desc = datos.length > 3 ? datos[3] : "";
                     String ord = datos.length > 4 ? datos[4] : "";
                     modeloListar.addRow(new Object[]{
                             datos[0], datos[1], datos[2], desc, ord
                     });
                 } else {
-                    
                     modeloListar.addRow(new Object[]{fila, "", "", "", ""});
                 }
             }
@@ -283,15 +278,13 @@ public class categoriaFrame extends JPanel {
     }
 
     private JPanel crearTabInsertar() {
-        txtIdCategoriaInsertar = Estilo.crearCampo();
         txtNombreInsertar = Estilo.crearCampo();
         txtDescripcionInsertar = Estilo.crearCampo();
         txtTipoCategoriaInsertar = Estilo.crearCampo();
         txtOrdenInsertar = Estilo.crearCampo();
 
-        JPanel form = new JPanel(new GridLayout(3, 2, 20, 14));
+        JPanel form = new JPanel(new GridLayout(2, 2, 20, 14));
         form.setOpaque(false);
-        form.add(Estilo.crearGrupo("ID Categoría", txtIdCategoriaInsertar));
         form.add(Estilo.crearGrupo("Nombre", txtNombreInsertar));
         form.add(Estilo.crearGrupo("Tipo (Ej. Gasto/Ingreso/Ahorro)", txtTipoCategoriaInsertar));
         form.add(Estilo.crearGrupo("Descripción", txtDescripcionInsertar));
@@ -305,14 +298,13 @@ public class categoriaFrame extends JPanel {
     }
 
     private void insertar() {
-        String idCat = txtIdCategoriaInsertar.getText().trim();
         String nombre = txtNombreInsertar.getText().trim();
         String desc = txtDescripcionInsertar.getText().trim();
         String tipo = txtTipoCategoriaInsertar.getText().trim();
         String ordenStr = txtOrdenInsertar.getText().trim();
 
-        if (idCat.isEmpty() || nombre.isEmpty() || tipo.isEmpty()) {
-            Estilo.mostrarAviso(this, "Completa los campos obligatorios (ID, Nombre, Tipo).");
+        if (nombre.isEmpty() || tipo.isEmpty()) {
+            Estilo.mostrarAviso(this, "Completa los campos obligatorios (Nombre, Tipo).");
             return;
         }
 
@@ -326,7 +318,7 @@ public class categoriaFrame extends JPanel {
             }
         }
 
-        boolean ok = crud.insertarCategoria(idCat, nombre, desc, tipo, orden, usuarioActual());
+        boolean ok = crud.insertarCategoria(nombre, desc, tipo, orden, usuarioActual());
         if (ok) {
             Estilo.mostrarInfo(this, "Categoría registrada correctamente.");
             limpiarInsertar();
@@ -336,7 +328,6 @@ public class categoriaFrame extends JPanel {
     }
 
     private void limpiarInsertar() {
-        txtIdCategoriaInsertar.setText("");
         txtNombreInsertar.setText("");
         txtDescripcionInsertar.setText("");
         txtTipoCategoriaInsertar.setText("");
@@ -379,8 +370,6 @@ public class categoriaFrame extends JPanel {
             Estilo.mostrarAviso(this, "Ingresa el ID de la categoría a actualizar.");
             return;
         }
-        
-        
         
         ArrayList<String> lista = crud.listarCategorias("");
         boolean found = false;

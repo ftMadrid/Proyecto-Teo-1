@@ -36,10 +36,8 @@ public class usuarioFrame extends JPanel {
     private DefaultTableModel modeloListar;
     private JTable tablaListar;
 
-    private JTextField txtIdInsertar, txtNombresInsertar, txtApellidosInsertar, txtCorreoInsertar, txtSalarioInsertar;
-
+    private JTextField txtNombresInsertar, txtApellidosInsertar, txtCorreoInsertar, txtSalarioInsertar;
     private JTextField txtIdActualizar, txtNombresActualizar, txtApellidosActualizar, txtCorreoActualizar, txtSalarioActualizar;
-
     private JTextField txtIdEliminar;
 
     public usuarioFrame(hubFrame ventana) {
@@ -59,7 +57,6 @@ public class usuarioFrame extends JPanel {
 
         add(crearTarjetaPrincipal(), BorderLayout.CENTER);
     }
-
 
     private JPanel crearTarjetaPrincipal() {
         JPanel tarjeta = new JPanel(new BorderLayout());
@@ -144,7 +141,6 @@ public class usuarioFrame extends JPanel {
         cardTabs.show(panelTabs, nombre);
     }
 
-
     private JPanel crearTabConsultar() {
         JPanel panel = new JPanel(new BorderLayout(0, 18));
         panel.setOpaque(false);
@@ -181,7 +177,6 @@ public class usuarioFrame extends JPanel {
             areaConsultar.setText("[!] No se encontro el usuario con ID: " + id);
         }
     }
-
 
     private JPanel crearTabListar() {
         JPanel panel = new JPanel(new BorderLayout(0, 14));
@@ -270,20 +265,17 @@ public class usuarioFrame extends JPanel {
         return valor == null ? "" : valor.toString();
     }
 
-
     private JPanel crearTabInsertar() {
-        txtIdInsertar = Estilo.crearCampo();
         txtNombresInsertar = Estilo.crearCampo();
         txtApellidosInsertar = Estilo.crearCampo();
         txtCorreoInsertar = Estilo.crearCampo();
         txtSalarioInsertar = Estilo.crearCampo();
 
-        JPanel form = new JPanel(new GridLayout(3, 2, 20, 14));
+        JPanel form = new JPanel(new GridLayout(2, 2, 20, 14));
         form.setOpaque(false);
-        form.add(Estilo.crearGrupo("ID de usuario", txtIdInsertar));
-        form.add(Estilo.crearGrupo("Correo", txtCorreoInsertar));
         form.add(Estilo.crearGrupo("Nombres", txtNombresInsertar));
         form.add(Estilo.crearGrupo("Apellidos", txtApellidosInsertar));
+        form.add(Estilo.crearGrupo("Correo", txtCorreoInsertar));
         form.add(Estilo.crearGrupo("Salario base (L.)", txtSalarioInsertar));
 
         JPanel botones = crearBotonera(
@@ -294,24 +286,18 @@ public class usuarioFrame extends JPanel {
     }
 
     private void insertar() {
-        String id = txtIdInsertar.getText().trim();
         String nombres = txtNombresInsertar.getText().trim();
         String apellidos = txtApellidosInsertar.getText().trim();
         String correo = txtCorreoInsertar.getText().trim();
         String salario = txtSalarioInsertar.getText().trim();
 
-        String error = validarDatos(id, nombres, apellidos, correo, salario);
+        String error = validarDatos(nombres, apellidos, correo, salario);
         if (error != null) {
             Estilo.mostrarAviso(this, error);
             return;
         }
 
-        if (buscarFilaPorId(id) != null) {
-            Estilo.mostrarAviso(this, "Ya existe un usuario con el ID: " + id);
-            return;
-        }
-
-        boolean ok = crud.insertarUsuario(id, nombres, apellidos, correo, Double.parseDouble(salario), usuarioActual());
+        boolean ok = crud.insertarUsuario(nombres, apellidos, correo, Double.parseDouble(salario), usuarioActual());
         if (ok) {
             Estilo.mostrarInfo(this, "Usuario registrado correctamente.");
             limpiarInsertar();
@@ -322,13 +308,11 @@ public class usuarioFrame extends JPanel {
     }
 
     private void limpiarInsertar() {
-        txtIdInsertar.setText("");
         txtNombresInsertar.setText("");
         txtApellidosInsertar.setText("");
         txtCorreoInsertar.setText("");
         txtSalarioInsertar.setText("");
     }
-
 
     private JPanel crearTabActualizar() {
         txtIdActualizar = Estilo.crearCampo();
@@ -388,7 +372,16 @@ public class usuarioFrame extends JPanel {
         String correo = txtCorreoActualizar.getText().trim();
         String salario = txtSalarioActualizar.getText().trim();
 
-        String error = validarDatos(id, nombres, apellidos, correo, salario);
+        if (id.isEmpty()) {
+            Estilo.mostrarAviso(this, "El ID de usuario es obligatorio.");
+            return;
+        }
+        if (id.contains(",")) {
+            Estilo.mostrarAviso(this, "No uses comas en el ID.");
+            return;
+        }
+
+        String error = validarDatos(nombres, apellidos, correo, salario);
         if (error != null) {
             Estilo.mostrarAviso(this, error);
             return;
@@ -416,7 +409,6 @@ public class usuarioFrame extends JPanel {
         txtCorreoActualizar.setText("");
         txtSalarioActualizar.setText("");
     }
-
 
     private JPanel crearTabEliminar() {
         JPanel panel = new JPanel(new BorderLayout(0, 18));
@@ -470,7 +462,6 @@ public class usuarioFrame extends JPanel {
         }
     }
 
-
     private String usuarioActual() {
         return ventanaPrincipal.getNombreCuenta();
     }
@@ -489,10 +480,7 @@ public class usuarioFrame extends JPanel {
         return null;
     }
 
-    private String validarDatos(String id, String nombres, String apellidos, String correo, String salario) {
-        if (id.isEmpty()) {
-            return "El ID de usuario es obligatorio.";
-        }
+    private String validarDatos(String nombres, String apellidos, String correo, String salario) {
         if (nombres.isEmpty()) {
             return "Los nombres son obligatorios.";
         }
@@ -505,8 +493,8 @@ public class usuarioFrame extends JPanel {
         if (!salario.matches("\\d+(\\.\\d{1,2})?")) {
             return "El salario debe ser un número positivo, por ejemplo: 15000 o 15000.50";
         }
-        if (id.contains(",") || nombres.contains(",") || apellidos.contains(",") || correo.contains(",")) {
-            return "No uses comas en el ID, nombres, apellidos ni correo.";
+        if (nombres.contains(",") || apellidos.contains(",") || correo.contains(",")) {
+            return "No uses comas en los nombres, apellidos ni correo.";
         }
         return null;
     }

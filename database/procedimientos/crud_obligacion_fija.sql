@@ -1,6 +1,5 @@
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE sp_insertar_obligacion(
-    IN p_id_obligacion VARCHAR(30),
     IN p_id_usuario VARCHAR(30),
     IN p_id_subcategoria VARCHAR(30),
     IN p_nombre VARCHAR(255),
@@ -13,7 +12,6 @@ CREATE OR REPLACE PROCEDURE sp_insertar_obligacion(
 )
 BEGIN
     INSERT INTO obligacion_fija(
-        id_obligacion,
         id_usuario,
         id_subcategoria,
         nombre,
@@ -24,7 +22,6 @@ BEGIN
         fecha_finalizacion,
         creado_por
     )VALUES (
-        p_id_obligacion,
         p_id_usuario,
         p_id_subcategoria,
         p_nombre,

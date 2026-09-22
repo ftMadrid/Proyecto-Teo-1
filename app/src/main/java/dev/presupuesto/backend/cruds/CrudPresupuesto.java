@@ -9,21 +9,20 @@ import dev.presupuesto.conexiones.ConexionDB;
 
 public class CrudPresupuesto {
 
-    public boolean insertarPresupuesto(String idPresupuesto, String idUsuario, String nombre, int anioInicio, int mesInicio, int anioFin, int mesFin, String creadoPor){
+    public boolean insertarPresupuesto(String idUsuario, String nombre, int anioInicio, int mesInicio, int anioFin, int mesFin, String creadoPor){
         
-        String query = "{CALL sp_insertar_presupuesto(?, ?, ?, ?, ?, ?, ?, ?)}";
+        String query = "{CALL sp_insertar_presupuesto(?, ?, ?, ?, ?, ?, ?)}";
         
         try(Connection con = ConexionDB.obtenerConexion();
             CallableStatement cs = con.prepareCall(query)){
-            
-            cs.setString(1, idPresupuesto);
-            cs.setString(2, idUsuario);
-            cs.setString(3, nombre);
-            cs.setInt(4, anioInicio);
-            cs.setInt(5, mesInicio);
-            cs.setInt(6, anioFin);
-            cs.setInt(7, mesFin);
-            cs.setString(8, creadoPor);
+
+            cs.setString(1, idUsuario);
+            cs.setString(2, nombre);
+            cs.setInt(3, anioInicio);
+            cs.setInt(4, mesInicio);
+            cs.setInt(5, anioFin);
+            cs.setInt(6, mesFin);
+            cs.setString(7, creadoPor);
             cs.execute();
 
             return true;

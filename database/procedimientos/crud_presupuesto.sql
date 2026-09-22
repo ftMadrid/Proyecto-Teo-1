@@ -1,6 +1,5 @@
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE sp_insertar_presupuesto(
-    IN p_id_presupuesto VARCHAR(30),
     IN p_id_usuario VARCHAR(30),
     IN p_nombre_descriptivo VARCHAR(255),
     IN p_anio_inicio INT,
@@ -11,7 +10,6 @@ CREATE OR REPLACE PROCEDURE sp_insertar_presupuesto(
 )
 BEGIN
     INSERT INTO presupuesto (
-        id_presupuesto,
         id_usuario,
         nombre_descriptivo,
         anio_inicio,
@@ -22,7 +20,6 @@ BEGIN
         estado_presupuesto,
         creado_por
     )VALUES (
-        p_id_presupuesto,
         p_id_usuario,
         p_nombre_descriptivo,
         p_anio_inicio,

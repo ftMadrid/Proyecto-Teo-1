@@ -11,22 +11,21 @@ import dev.presupuesto.conexiones.ConexionDB;
 
 public class CrudObligacionFija {
 
-    public boolean insertarObligacion(String idObligacion, String idUsuario, String idSubcategoria, String nombre, String descripcion, double montoMensual, int diaVencimiento, String fechaInicio, String fechaFin, String creadoPor){
-        String query = "{CALL sp_insertar_obligacion(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
+    public boolean insertarObligacion(String idUsuario, String idSubcategoria, String nombre, String descripcion, double montoMensual, int diaVencimiento, String fechaInicio, String fechaFin, String creadoPor){
+        String query = "{CALL sp_insertar_obligacion(?, ?, ?, ?, ?, ?, ?, ?, ?)}";
         
         try(Connection con = ConexionDB.obtenerConexion();
             CallableStatement cs = con.prepareCall(query)){
             
-            cs.setString(1, idObligacion);
-            cs.setString(2, idUsuario);
-            cs.setString(3, idSubcategoria);
-            cs.setString(4, nombre);
-            cs.setString(5, descripcion);
-            cs.setDouble(6, montoMensual);
-            cs.setInt(7, diaVencimiento);
-            cs.setTimestamp(8, Timestamp.valueOf(fechaInicio)); 
-            cs.setTimestamp(9, Timestamp.valueOf(fechaFin));
-            cs.setString(10, creadoPor);
+            cs.setString(1, idUsuario);
+            cs.setString(2, idSubcategoria);
+            cs.setString(3, nombre);
+            cs.setString(4, descripcion);
+            cs.setDouble(5, montoMensual);
+            cs.setInt(6, diaVencimiento);
+            cs.setTimestamp(7, Timestamp.valueOf(fechaInicio)); 
+            cs.setTimestamp(8, Timestamp.valueOf(fechaFin));
+            cs.setString(9, creadoPor);
             cs.execute();
 
             return true;

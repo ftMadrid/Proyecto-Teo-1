@@ -36,7 +36,8 @@ public class transaccionFrame extends JPanel {
     private DefaultTableModel modeloListar;
     private JTable tablaListar;
 
-    private JTextField txtIdtransaccionInsertar, txtIdusuarioInsertar, txtIdpresupuestoInsertar, txtAnioInsertar, txtMesInsertar, txtIdsubcategoriaInsertar, txtIdobligacionInsertar, txtTipotransaccionInsertar, txtDescripcionInsertar, txtMontoInsertar, txtFechaInsertar, txtMetodopagoInsertar, txtNumerofacturaInsertar, txtObservacionesInsertar;
+    // Se eliminó txtIdtransaccionInsertar de la lista de inserción
+    private JTextField txtIdusuarioInsertar, txtIdpresupuestoInsertar, txtAnioInsertar, txtMesInsertar, txtIdsubcategoriaInsertar, txtIdobligacionInsertar, txtTipotransaccionInsertar, txtDescripcionInsertar, txtMontoInsertar, txtFechaInsertar, txtMetodopagoInsertar, txtNumerofacturaInsertar, txtObservacionesInsertar;
     private JTextField txtIdtransaccionActualizar, txtIdsubcategoriaActualizar, txtTipotransaccionActualizar, txtDescripcionActualizar, txtMontoActualizar, txtFechaActualizar, txtMetodopagoActualizar, txtNumerofacturaActualizar, txtObservacionesActualizar;
     private JTextField txtIdEliminar;
 
@@ -237,7 +238,6 @@ public class transaccionFrame extends JPanel {
     }
 
     private JComponent crearTabInsertar() {
-        txtIdtransaccionInsertar = Estilo.crearCampo();
         txtIdusuarioInsertar = Estilo.crearCampo();
         txtIdpresupuestoInsertar = Estilo.crearCampo();
         txtAnioInsertar = Estilo.crearCampo();
@@ -254,7 +254,6 @@ public class transaccionFrame extends JPanel {
 
         JPanel form = new JPanel(new GridLayout(7, 2, 20, 14));
         form.setOpaque(false);
-        form.add(Estilo.crearGrupo("ID Transacción", txtIdtransaccionInsertar));
         form.add(Estilo.crearGrupo("ID Usuario", txtIdusuarioInsertar));
         form.add(Estilo.crearGrupo("ID Presupuesto", txtIdpresupuestoInsertar));
         form.add(Estilo.crearGrupo("ID Subcategoría", txtIdsubcategoriaInsertar));
@@ -268,6 +267,7 @@ public class transaccionFrame extends JPanel {
         form.add(Estilo.crearGrupo("Observaciones", txtObservacionesInsertar));
         form.add(Estilo.crearGrupo("ID Obligación (Opcional)", txtIdobligacionInsertar));
         form.add(Estilo.crearGrupo("No. Factura (Opcional)", txtNumerofacturaInsertar));
+        form.add(new JLabel()); // Relleno para balancear la cuadrícula de 7x2
 
         JPanel botones = crearBotonera(
                 Estilo.botonPrimario("Guardar transacción", this::insertar),
@@ -278,13 +278,12 @@ public class transaccionFrame extends JPanel {
 
     private void insertar() {
         try {
-            if (txtIdtransaccionInsertar.getText().trim().isEmpty() || txtIdpresupuestoInsertar.getText().trim().isEmpty()) {
+            if (txtIdpresupuestoInsertar.getText().trim().isEmpty()) {
                 Estilo.mostrarAviso(this, "Revisa los campos obligatorios antes de continuar.");
                 return;
             }
 
             boolean res = crud.insertarTransaccion(
-                txtIdtransaccionInsertar.getText().trim(),
                 txtIdusuarioInsertar.getText().trim(),
                 txtIdpresupuestoInsertar.getText().trim(),
                 Integer.parseInt(txtAnioInsertar.getText().trim()),
@@ -313,7 +312,6 @@ public class transaccionFrame extends JPanel {
     }
 
     private void limpiarInsertar() {
-        txtIdtransaccionInsertar.setText("");
         txtIdusuarioInsertar.setText("");
         txtIdpresupuestoInsertar.setText("");
         txtAnioInsertar.setText("");

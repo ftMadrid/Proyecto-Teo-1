@@ -40,7 +40,7 @@ public class obligacionFijaFrame extends JPanel {
     private DefaultTableModel modeloListar;
     private JTable tablaListar;
 
-    private JTextField txtIdObligacionInsertar, txtIdUsuarioInsertar, txtIdSubcategoriaInsertar, txtNombreInsertar,
+    private JTextField txtIdUsuarioInsertar, txtIdSubcategoriaInsertar, txtNombreInsertar,
             txtDescripcionInsertar, txtMontoMensualInsertar, txtDiaVencimientoInsertar,
             txtFechaInicioInsertar, txtFechaFinInsertar, txtCreadoPorInsertar;
 
@@ -300,7 +300,6 @@ public class obligacionFijaFrame extends JPanel {
         return null;
     }
 
-    // Convierte "id - nombre [Dia X] (L.monto)" en {id, nombre, dia, monto}
     private String[] parsearFilaListado(String fila) {
         int idxSeparador = fila.indexOf(" - ");
         if (idxSeparador == -1) {
@@ -349,7 +348,6 @@ public class obligacionFijaFrame extends JPanel {
     // ---------- Insertar ----------
 
     private JComponent crearTabInsertar() {
-        txtIdObligacionInsertar = Estilo.crearCampo();
         txtIdUsuarioInsertar = Estilo.crearCampo();
         txtIdSubcategoriaInsertar = Estilo.crearCampo();
         txtNombreInsertar = Estilo.crearCampo();
@@ -362,7 +360,6 @@ public class obligacionFijaFrame extends JPanel {
 
         JPanel form = new JPanel(new GridLayout(5, 2, 20, 14));
         form.setOpaque(false);
-        form.add(Estilo.crearGrupo("ID Obligación", txtIdObligacionInsertar));
         form.add(Estilo.crearGrupo("ID Usuario", txtIdUsuarioInsertar));
         form.add(Estilo.crearGrupo("ID Subcategoría", txtIdSubcategoriaInsertar));
         form.add(Estilo.crearGrupo("Nombre", txtNombreInsertar));
@@ -372,6 +369,7 @@ public class obligacionFijaFrame extends JPanel {
         form.add(Estilo.crearGrupo("Fecha inicio (AAAA-MM-DD)", txtFechaInicioInsertar));
         form.add(Estilo.crearGrupo("Fecha fin (AAAA-MM-DD)", txtFechaFinInsertar));
         form.add(Estilo.crearGrupo("Creado por", txtCreadoPorInsertar));
+        form.add(new JLabel()); // Relleno para balancear la cuadrícula de 5x2
 
         JPanel botones = crearBotonera(
                 Estilo.botonPrimario("Guardar obligación", this::insertar),
@@ -381,7 +379,6 @@ public class obligacionFijaFrame extends JPanel {
     }
 
     private void insertar() {
-        String idObligacion = txtIdObligacionInsertar.getText().trim();
         String idUsuario = txtIdUsuarioInsertar.getText().trim();
         String idSubcategoria = txtIdSubcategoriaInsertar.getText().trim();
         String nombre = txtNombreInsertar.getText().trim();
@@ -392,18 +389,13 @@ public class obligacionFijaFrame extends JPanel {
         String fechaFin = txtFechaFinInsertar.getText().trim();
         String creadoPor = txtCreadoPorInsertar.getText().trim();
 
-        String error = validarDatosInsertar(idObligacion, idUsuario, idSubcategoria, nombre, monto, dia, fechaInicio, fechaFin, creadoPor);
+        String error = validarDatosInsertar(idUsuario, idSubcategoria, nombre, monto, dia, fechaInicio, fechaFin, creadoPor);
         if (error != null) {
             Estilo.mostrarAviso(this, error);
             return;
         }
 
-        if (crud.consultarObligacion(idObligacion) != null) {
-            Estilo.mostrarAviso(this, "Ya existe una obligación con el ID: " + idObligacion);
-            return;
-        }
-
-        boolean ok = crud.insertarObligacion(idObligacion, idUsuario, idSubcategoria, nombre, descripcion,
+        boolean ok = crud.insertarObligacion(idUsuario, idSubcategoria, nombre, descripcion,
                 Double.parseDouble(monto), Integer.parseInt(dia),
                 timestampInicio(fechaInicio), timestampFin(fechaFin), creadoPor);
         if (ok) {
@@ -416,7 +408,6 @@ public class obligacionFijaFrame extends JPanel {
     }
 
     private void limpiarInsertar() {
-        txtIdObligacionInsertar.setText("");
         txtIdUsuarioInsertar.setText("");
         txtIdSubcategoriaInsertar.setText("");
         txtNombreInsertar.setText("");
@@ -492,9 +483,9 @@ public class obligacionFijaFrame extends JPanel {
             return;
         }
 
-        String nombre = extraerValor(resultado, "Obligacion: ", " | ");
-        String monto = extraerValor(resultado, "Monto: L.", " | ");
-        String dia = extraerValor(resultado, "Vence dia: ", " | ");
+        String nombre = extraerValor(resultado, "Obligacion: ", "\n");
+        String monto = extraerValor(resultado, "Monto: L.", "\n");
+        String dia = extraerValor(resultado, "Vence dia: ", "\n");
 
         txtNombreActualizar.setText(nombre);
         txtMontoMensualActualizar.setText(montoPlano(monto));
@@ -614,11 +605,8 @@ public class obligacionFijaFrame extends JPanel {
         return ventanaPrincipal.getNombreCuenta();
     }
 
-    private String validarDatosInsertar(String idObligacion, String idUsuario, String idSubcategoria, String nombre,
+    private String validarDatosInsertar(String idUsuario, String idSubcategoria, String nombre,
                                          String monto, String dia, String fechaInicio, String fechaFin, String creadoPor) {
-        if (idObligacion.isEmpty()) {
-            return "El ID de obligación es obligatorio.";
-        }
         if (idUsuario.isEmpty()) {
             return "El ID de usuario es obligatorio.";
         }
@@ -714,7 +702,6 @@ public class obligacionFijaFrame extends JPanel {
         return fecha + " 23:59:59";
     }
 
-    // Extrae el valor entre "etiqueta" y el siguiente separador (o el resto del texto si separador es null)
     private String extraerValor(String texto, String etiqueta, String separador) {
         int idx = texto.indexOf(etiqueta);
         if (idx == -1) {

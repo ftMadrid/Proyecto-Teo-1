@@ -115,7 +115,7 @@ public class loginFrame extends JFrame {
 
             if (usuario.equals("fernando_madrid") && contrasena.equals("sofia2026")) {
                 dispose(); 
-                new hubFrame("Fernando"); 
+                new hubFrame("Fernando Madrid"); 
             } else {
                 UIManager.put("Panel.background", fondoTarjeta);
                 UIManager.put("OptionPane.background", fondoTarjeta);

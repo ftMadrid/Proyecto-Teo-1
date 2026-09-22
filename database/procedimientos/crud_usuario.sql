@@ -1,6 +1,5 @@
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE sp_insertar_usuario (
-    IN p_id_usuario VARCHAR(30),
     IN p_nombres VARCHAR(255),
     IN p_apellidos VARCHAR(255),
     IN p_correo VARCHAR(100),
@@ -9,7 +8,6 @@ CREATE OR REPLACE PROCEDURE sp_insertar_usuario (
 )
 BEGIN
     INSERT INTO usuario (
-        id_usuario,
         nombres,
         apellidos,
         correo,
@@ -18,7 +16,6 @@ BEGIN
         estado,
         creado_por
     ) VALUES (
-        p_id_usuario,
         p_nombres,
         p_apellidos,
         p_correo,

@@ -9,22 +9,21 @@ import dev.presupuesto.conexiones.ConexionDB;
 
 public class CrudUsuario {
     
-    public boolean insertarUsuario(String id, String nombres, String apellidos, String correo, double salario, String creadoPor){
-        String query = "{CALL sp_insertar_usuario(?, ?, ?, ?, ?, ?)}";
+    public boolean insertarUsuario(String nombres, String apellidos, String correo, double salario, String creadoPor){
+        String query = "{CALL sp_insertar_usuario(?, ?, ?, ?, ?)}";
         
         try(Connection con = ConexionDB.obtenerConexion();
             CallableStatement cs = con.prepareCall(query)){
             
-            cs.setString(1, id);
-            cs.setString(2, nombres);
-            cs.setString(3, apellidos);
-            cs.setString(4, correo);
-            cs.setDouble(5, salario);
-            cs.setString(6, creadoPor); 
+            cs.setString(1, nombres);
+            cs.setString(2, apellidos);
+            cs.setString(3, correo);
+            cs.setDouble(4, salario);
+            cs.setString(5, creadoPor); 
             cs.execute();
 
             return true;
-        }catch(Exception e){
+        } catch(Exception e){
             System.err.println("[ERROR] No se pudo insertar: " + e.getMessage());
             return false;
         }

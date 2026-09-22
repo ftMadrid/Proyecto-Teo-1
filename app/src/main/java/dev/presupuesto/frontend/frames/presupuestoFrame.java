@@ -36,7 +36,7 @@ public class presupuestoFrame extends JPanel {
     private DefaultTableModel modeloListar;
     private JTable tablaListar;
 
-    private JTextField txtIdPresupuestoInsertar, txtIdUsuarioInsertar, txtNombreInsertar;
+    private JTextField txtIdUsuarioInsertar, txtNombreInsertar;
     private JTextField txtAnioInicioInsertar, txtMesInicioInsertar, txtAnioFinInsertar, txtMesFinInsertar;
 
     private JTextField txtIdPresupuestoActualizar, txtNombreActualizar;
@@ -285,7 +285,6 @@ public class presupuestoFrame extends JPanel {
     }
 
     private JPanel crearTabInsertar() {
-        txtIdPresupuestoInsertar = Estilo.crearCampo();
         txtIdUsuarioInsertar = Estilo.crearCampo();
         txtNombreInsertar = Estilo.crearCampo();
         txtAnioInicioInsertar = Estilo.crearCampo();
@@ -293,12 +292,10 @@ public class presupuestoFrame extends JPanel {
         txtAnioFinInsertar = Estilo.crearCampo();
         txtMesFinInsertar = Estilo.crearCampo();
 
-        JPanel form = new JPanel(new GridLayout(4, 2, 20, 14));
+        JPanel form = new JPanel(new GridLayout(3, 2, 20, 14));
         form.setOpaque(false);
-        form.add(Estilo.crearGrupo("ID Presupuesto", txtIdPresupuestoInsertar));
         form.add(Estilo.crearGrupo("ID Usuario", txtIdUsuarioInsertar));
         form.add(Estilo.crearGrupo("Nombre", txtNombreInsertar));
-        form.add(new JLabel());
         form.add(Estilo.crearGrupo("Año Inicio", txtAnioInicioInsertar));
         form.add(Estilo.crearGrupo("Mes Inicio (1-12)", txtMesInicioInsertar));
         form.add(Estilo.crearGrupo("Año Fin", txtAnioFinInsertar));
@@ -312,7 +309,6 @@ public class presupuestoFrame extends JPanel {
     }
 
     private void insertar() {
-        String idPres = txtIdPresupuestoInsertar.getText().trim();
         String idUsu = txtIdUsuarioInsertar.getText().trim();
         String nombre = txtNombreInsertar.getText().trim();
         String anioIniStr = txtAnioInicioInsertar.getText().trim();
@@ -320,7 +316,7 @@ public class presupuestoFrame extends JPanel {
         String anioFinStr = txtAnioFinInsertar.getText().trim();
         String mesFinStr = txtMesFinInsertar.getText().trim();
 
-        if (idPres.isEmpty() || idUsu.isEmpty() || nombre.isEmpty()) {
+        if (idUsu.isEmpty() || nombre.isEmpty()) {
             Estilo.mostrarAviso(this, "Completa los campos obligatorios.");
             return;
         }
@@ -331,7 +327,7 @@ public class presupuestoFrame extends JPanel {
             int anioFin = Integer.parseInt(anioFinStr);
             int mesFin = Integer.parseInt(mesFinStr);
 
-            boolean ok = crud.insertarPresupuesto(idPres, idUsu, nombre, anioIni, mesIni, anioFin, mesFin, usuarioActual());
+            boolean ok = crud.insertarPresupuesto(idUsu, nombre, anioIni, mesIni, anioFin, mesFin, usuarioActual());
             if (ok) {
                 Estilo.mostrarInfo(this, "Presupuesto registrado correctamente.");
                 limpiarInsertar();
@@ -344,7 +340,6 @@ public class presupuestoFrame extends JPanel {
     }
 
     private void limpiarInsertar() {
-        txtIdPresupuestoInsertar.setText("");
         txtIdUsuarioInsertar.setText("");
         txtNombreInsertar.setText("");
         txtAnioInicioInsertar.setText("");
@@ -356,6 +351,7 @@ public class presupuestoFrame extends JPanel {
     private JPanel crearTabActualizar() {
         txtIdPresupuestoActualizar = Estilo.crearCampo();
         txtIdPresupuestoActualizar.setPreferredSize(new Dimension(240, 40));
+        txtIdPresupuestoActualizar.addActionListener(e -> cargarParaActualizar());
         
         txtNombreActualizar = Estilo.crearCampo();
         txtAnioInicioActualizar = Estilo.crearCampo();
@@ -375,8 +371,8 @@ public class presupuestoFrame extends JPanel {
 
         JPanel superior = new JPanel(new BorderLayout(0, 18));
         superior.setOpaque(false);
-        superior.add(crearFilaBusqueda("ID Presupuesto", txtIdPresupuestoActualizar, new JLabel(" ")),
-                BorderLayout.NORTH);
+        superior.add(crearFilaBusqueda("ID Presupuesto", txtIdPresupuestoActualizar, 
+                Estilo.botonSecundario("Cargar datos", this::cargarParaActualizar)), BorderLayout.NORTH);
         superior.add(form, BorderLayout.CENTER);
 
         JPanel botones = crearBotonera(
@@ -384,6 +380,23 @@ public class presupuestoFrame extends JPanel {
                 Estilo.botonSecundario("Limpiar", this::limpiarActualizar));
 
         return crearFormulario(superior, botones);
+    }
+
+    private void cargarParaActualizar() {
+        String id = txtIdPresupuestoActualizar.getText().trim();
+        if (id.isEmpty()) {
+            Estilo.mostrarAviso(this, "Ingresa el ID del presupuesto a actualizar.");
+            return;
+        }
+
+        String resultado = crud.consultarPresupuesto(id);
+        if (resultado == null || resultado.isEmpty()) {
+            Estilo.mostrarAviso(this, "No se encontró el presupuesto con ID: " + id);
+            return;
+        }
+
+        Estilo.mostrarInfo(this, "Presupuesto encontrado. Completa los campos a actualizar.");
+        txtNombreActualizar.requestFocusInWindow();
     }
 
     private void actualizar() {

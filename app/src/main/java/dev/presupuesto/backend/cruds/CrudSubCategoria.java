@@ -9,18 +9,17 @@ import dev.presupuesto.conexiones.ConexionDB;
 
 public class CrudSubCategoria {
 
-    public boolean insertarSubcategoria(String idSubcategoria, String idCategoria, String nombre, String descripcion, String creadoPor){
+    public boolean insertarSubcategoria(String idCategoria, String nombre, String descripcion, String creadoPor){
         
-        String query = "{CALL sp_insertar_subcategoria(?, ?, ?, ?, ?)}";
+        String query = "{CALL sp_insertar_subcategoria(?, ?, ?, ?)}";
         
         try(Connection con = ConexionDB.obtenerConexion();
             CallableStatement cs = con.prepareCall(query)){
             
-            cs.setString(1, idSubcategoria);
-            cs.setString(2, idCategoria);
-            cs.setString(3, nombre);
-            cs.setString(4, descripcion);
-            cs.setString(5, creadoPor);
+            cs.setString(1, idCategoria);
+            cs.setString(2, nombre);
+            cs.setString(3, descripcion);
+            cs.setString(4, creadoPor);
             cs.execute();
 
             return true;

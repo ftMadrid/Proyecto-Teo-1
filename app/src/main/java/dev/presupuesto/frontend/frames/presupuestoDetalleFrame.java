@@ -37,7 +37,7 @@ public class presupuestoDetalleFrame extends JPanel {
     private DefaultTableModel modeloListar;
     private JTable tablaListar;
 
-    private JTextField txtIdDetalleInsertar, txtIdPresupuestoInsertar, txtIdSubcategoriaInsertar,
+    private JTextField txtIdPresupuestoInsertar, txtIdSubcategoriaInsertar,
             txtMontoMensualInsertar, txtObservacionesInsertar, txtCreadoPorInsertar;
 
     private JTextField txtIdDetalleActualizar, txtMontoMensualActualizar,
@@ -267,7 +267,6 @@ public class presupuestoDetalleFrame extends JPanel {
         }
     }
 
-    // Convierte "id - subcategoria [L.monto]" en {id, subcategoria, monto}
     private String[] parsearFilaListado(String fila) {
         int separador = fila.indexOf(" - ");
         int inicioMonto = fila.lastIndexOf(" [L.");
@@ -301,7 +300,6 @@ public class presupuestoDetalleFrame extends JPanel {
     // ---------- Insertar ----------
 
     private JPanel crearTabInsertar() {
-        txtIdDetalleInsertar = Estilo.crearCampo();
         txtIdPresupuestoInsertar = Estilo.crearCampo();
         txtIdSubcategoriaInsertar = Estilo.crearCampo();
         txtMontoMensualInsertar = Estilo.crearCampo();
@@ -310,12 +308,12 @@ public class presupuestoDetalleFrame extends JPanel {
 
         JPanel form = new JPanel(new GridLayout(3, 2, 20, 14));
         form.setOpaque(false);
-        form.add(Estilo.crearGrupo("ID Detalle", txtIdDetalleInsertar));
         form.add(Estilo.crearGrupo("ID Presupuesto", txtIdPresupuestoInsertar));
         form.add(Estilo.crearGrupo("ID Subcategoría", txtIdSubcategoriaInsertar));
         form.add(Estilo.crearGrupo("Monto mensual (L.)", txtMontoMensualInsertar));
-        form.add(Estilo.crearGrupo("Observaciones", txtObservacionesInsertar));
         form.add(Estilo.crearGrupo("Creado por", txtCreadoPorInsertar));
+        form.add(Estilo.crearGrupo("Observaciones", txtObservacionesInsertar));
+        form.add(new JLabel()); // Relleno para balancear la cuadrícula
 
         JPanel botones = crearBotonera(
                 Estilo.botonPrimario("Guardar detalle", this::insertar),
@@ -325,25 +323,19 @@ public class presupuestoDetalleFrame extends JPanel {
     }
 
     private void insertar() {
-        String idDetalle = txtIdDetalleInsertar.getText().trim();
         String idPresupuesto = txtIdPresupuestoInsertar.getText().trim();
         String idSubcategoria = txtIdSubcategoriaInsertar.getText().trim();
         String monto = txtMontoMensualInsertar.getText().trim();
         String observaciones = txtObservacionesInsertar.getText().trim();
         String creadoPor = txtCreadoPorInsertar.getText().trim();
 
-        String error = validarDatosInsertar(idDetalle, idPresupuesto, idSubcategoria, monto, creadoPor);
+        String error = validarDatosInsertar(idPresupuesto, idSubcategoria, monto, creadoPor);
         if (error != null) {
             Estilo.mostrarAviso(this, error);
             return;
         }
 
-        if (crud.consultarPresupuestoDetalle(idDetalle) != null) {
-            Estilo.mostrarAviso(this, "Ya existe un detalle con el ID: " + idDetalle);
-            return;
-        }
-
-        boolean ok = crud.insertarPresupuestoDetalle(idDetalle, idPresupuesto, idSubcategoria,
+        boolean ok = crud.insertarPresupuestoDetalle(idPresupuesto, idSubcategoria,
                 Double.parseDouble(monto), observaciones, creadoPor);
         if (ok) {
             Estilo.mostrarInfo(this, "Detalle registrado correctamente.");
@@ -355,7 +347,6 @@ public class presupuestoDetalleFrame extends JPanel {
     }
 
     private void limpiarInsertar() {
-        txtIdDetalleInsertar.setText("");
         txtIdPresupuestoInsertar.setText("");
         txtIdSubcategoriaInsertar.setText("");
         txtMontoMensualInsertar.setText("");
@@ -380,6 +371,7 @@ public class presupuestoDetalleFrame extends JPanel {
         form.add(Estilo.crearGrupo("Monto mensual (L.)", txtMontoMensualActualizar));
         form.add(Estilo.crearGrupo("Observaciones", txtObservacionesActualizar));
         form.add(Estilo.crearGrupo("Modificado por", txtModificadoPorActualizar));
+        form.add(new JLabel()); // Relleno para balancear la cuadrícula
 
         JPanel superior = new JPanel(new BorderLayout(0, 18));
         superior.setOpaque(false);
@@ -511,11 +503,8 @@ public class presupuestoDetalleFrame extends JPanel {
         }
     }
 
-    private String validarDatosInsertar(String idDetalle, String idPresupuesto, String idSubcategoria,
+    private String validarDatosInsertar(String idPresupuesto, String idSubcategoria,
                                          String monto, String creadoPor) {
-        if (idDetalle.isEmpty()) {
-            return "El ID de detalle es obligatorio.";
-        }
         if (idPresupuesto.isEmpty()) {
             return "El ID de presupuesto es obligatorio.";
         }
@@ -544,7 +533,6 @@ public class presupuestoDetalleFrame extends JPanel {
         return null;
     }
 
-    // Extrae el valor entre "etiqueta" y el siguiente separador (o el resto del texto si separador es null)
     private String extraerValor(String texto, String etiqueta, String separador) {
         int idx = texto.indexOf(etiqueta);
         if (idx == -1) {

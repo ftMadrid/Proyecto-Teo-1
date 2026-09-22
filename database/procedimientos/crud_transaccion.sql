@@ -1,6 +1,5 @@
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE sp_insertar_transaccion(
-    IN p_id_transaccion VARCHAR(30),
     IN p_id_usuario VARCHAR(30),
     IN p_id_presupuesto VARCHAR(30),
     IN p_anio INT,
@@ -18,7 +17,6 @@ CREATE OR REPLACE PROCEDURE sp_insertar_transaccion(
 )
 BEGIN
     INSERT INTO transaccion(
-        id_transaccion,
         id_usuario,
         id_presupuesto,
         anio,
@@ -35,7 +33,6 @@ BEGIN
         fecha_registro,
         creado_por
     )VALUES (
-        p_id_transaccion,
         p_id_usuario,
         p_id_presupuesto,
         p_anio,

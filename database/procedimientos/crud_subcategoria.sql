@@ -1,6 +1,5 @@
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE sp_insertar_subcategoria(
-    IN p_id_subcategoria VARCHAR(30),
     IN p_id_categoria VARCHAR(30),
     IN p_nombre VARCHAR(100),
     IN p_descripcion VARCHAR(255),
@@ -8,13 +7,11 @@ CREATE OR REPLACE PROCEDURE sp_insertar_subcategoria(
 )
 BEGIN
     INSERT INTO subcategoria(
-        id_subcategoria,
         id_categoria,
         nombre,
         descripcion,
         creado_por
     )VALUES (
-        p_id_subcategoria,
         p_id_categoria,
         p_nombre,
         p_descripcion,

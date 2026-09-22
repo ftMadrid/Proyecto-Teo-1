@@ -11,27 +11,26 @@ import dev.presupuesto.conexiones.ConexionDB;
 
 public class CrudTransaccion {
 
-    public boolean insertarTransaccion(String idTransaccion, String idUsuario, String idPresupuesto, int anio, int mes, String idSubcategoria, String idObligacion, String tipo, String descripcion, double monto, String fecha, String metodoPago, String numeroFactura, String observaciones, String creadoPor){
-        String query = "{CALL sp_insertar_transaccion(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
+    public boolean insertarTransaccion(String idUsuario, String idPresupuesto, int anio, int mes, String idSubcategoria, String idObligacion, String tipo, String descripcion, double monto, String fecha, String metodoPago, String numeroFactura, String observaciones, String creadoPor){
+        String query = "{CALL sp_insertar_transaccion(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
         
         try(Connection con = ConexionDB.obtenerConexion();
             CallableStatement cs = con.prepareCall(query)){
             
-            cs.setString(1, idTransaccion);
-            cs.setString(2, idUsuario);
-            cs.setString(3, idPresupuesto);
-            cs.setInt(4, anio);
-            cs.setInt(5, mes);
-            cs.setString(6, idSubcategoria);
-            cs.setString(7, idObligacion);
-            cs.setString(8, tipo);
-            cs.setString(9, descripcion);
-            cs.setDouble(10, monto);
-            cs.setTimestamp(11, Timestamp.valueOf(fecha.length() == 10 ? fecha + " 00:00:00" : fecha)); 
-            cs.setString(12, metodoPago);
-            cs.setString(13, numeroFactura);
-            cs.setString(14, observaciones);
-            cs.setString(15, creadoPor);
+            cs.setString(1, idUsuario);
+            cs.setString(2, idPresupuesto);
+            cs.setInt(3, anio);
+            cs.setInt(4, mes);
+            cs.setString(5, idSubcategoria);
+            cs.setString(6, idObligacion);
+            cs.setString(7, tipo);
+            cs.setString(8, descripcion);
+            cs.setDouble(9, monto);
+            cs.setTimestamp(10, Timestamp.valueOf(fecha.length() == 10 ? fecha + " 00:00:00" : fecha)); 
+            cs.setString(11, metodoPago);
+            cs.setString(12, numeroFactura);
+            cs.setString(13, observaciones);
+            cs.setString(14, creadoPor);
             cs.execute();
             
             return true;
