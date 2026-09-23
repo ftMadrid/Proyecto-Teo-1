@@ -151,8 +151,6 @@ public class obligacionFijaFrame extends JPanel {
         cardTabs.show(panelTabs, nombre);
     }
 
-    // ---------- Consultar ----------
-
     private JPanel crearTabConsultar() {
         JPanel panel = new JPanel(new BorderLayout(0, 18));
         panel.setOpaque(false);
@@ -190,8 +188,6 @@ public class obligacionFijaFrame extends JPanel {
             areaConsultar.setText("[!] No se encontro la obligacion con ID: " + id);
         }
     }
-
-    // ---------- Listar ----------
 
     private JPanel crearTabListar() {
         JPanel panel = new JPanel(new BorderLayout(0, 14));
@@ -341,8 +337,6 @@ public class obligacionFijaFrame extends JPanel {
         return valor == null ? "" : valor.toString();
     }
 
-    // ---------- Insertar ----------
-
     private JComponent crearTabInsertar() {
         txtIdUsuarioInsertar = Estilo.crearCampo();
         txtIdSubcategoriaInsertar = Estilo.crearCampo();
@@ -414,8 +408,6 @@ public class obligacionFijaFrame extends JPanel {
         txtFechaFinInsertar.setText("");
         
     }
-
-    // ---------- Actualizar ----------
 
     private JComponent crearTabActualizar() {
         txtIdObligacionActualizar = Estilo.crearCampo();
@@ -546,8 +538,6 @@ public class obligacionFijaFrame extends JPanel {
         txtFechaFinActualizar.setText("");
     }
 
-    // ---------- Eliminar ----------
-
     private JPanel crearTabEliminar() {
         JPanel panel = new JPanel(new BorderLayout(0, 18));
         panel.setOpaque(false);
@@ -597,8 +587,6 @@ public class obligacionFijaFrame extends JPanel {
             Estilo.mostrarError(this, "No se pudo eliminar la obligación. Revisa la consola para ver el detalle.");
         }
     }
-
-    // ---------- Utilidades ----------
 
     private void refrescarListaSiHayCargada() {
         if (txtIdUsuarioListar != null && !txtIdUsuarioListar.getText().trim().isEmpty()) {

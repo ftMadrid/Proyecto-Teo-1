@@ -374,7 +374,6 @@ public class hubFrame extends JFrame {
         barraLateralPerfil.repaint();
     }
 
-
     
     
     
@@ -411,7 +410,6 @@ public class hubFrame extends JFrame {
         panel.add(tarjeta, BorderLayout.CENTER);
         return panel;
     }
-
 
     private static Border bordeBotonSecundario(Color color) {
         return BorderFactory.createCompoundBorder(
@@ -455,7 +453,6 @@ public class hubFrame extends JFrame {
     public String getNombreCuenta() {
         return nombreCuenta;
     }
-
 
     
     

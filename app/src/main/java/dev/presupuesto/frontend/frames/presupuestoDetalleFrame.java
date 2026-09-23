@@ -63,7 +63,6 @@ public class presupuestoDetalleFrame extends JPanel {
         add(crearTarjetaPrincipal(), BorderLayout.CENTER);
     }
 
-
     private JPanel crearTarjetaPrincipal() {
         JPanel tarjeta = new JPanel(new BorderLayout());
         tarjeta.setBackground(Tema.fondoTarjeta());
@@ -147,9 +146,6 @@ public class presupuestoDetalleFrame extends JPanel {
         cardTabs.show(panelTabs, nombre);
     }
 
-
-    // ---------- Consultar ----------
-
     private JPanel crearTabConsultar() {
         JPanel panel = new JPanel(new BorderLayout(0, 18));
         panel.setOpaque(false);
@@ -187,9 +183,6 @@ public class presupuestoDetalleFrame extends JPanel {
             areaConsultar.setText("[!] No se encontro el detalle con ID: " + id);
         }
     }
-
-
-    // ---------- Listar ----------
 
     private JPanel crearTabListar() {
         JPanel panel = new JPanel(new BorderLayout(0, 14));
@@ -309,8 +302,6 @@ public class presupuestoDetalleFrame extends JPanel {
         return ventanaPrincipal.getNombreCuenta();
     }
 
-    // ---------- Insertar ----------
-
     private JPanel crearTabInsertar() {
         txtIdPresupuestoInsertar = Estilo.crearCampo();
         txtIdSubcategoriaInsertar = Estilo.crearCampo();
@@ -361,9 +352,6 @@ public class presupuestoDetalleFrame extends JPanel {
         txtMontoMensualInsertar.setText("");
         txtObservacionesInsertar.setText("");
     }
-
-
-    // ---------- Actualizar ----------
 
     private JPanel crearTabActualizar() {
         txtIdDetalleActualizar = Estilo.crearCampo();
@@ -451,9 +439,6 @@ public class presupuestoDetalleFrame extends JPanel {
         txtObservacionesActualizar.setText("");
     }
 
-
-    // ---------- Eliminar ----------
-
     private JPanel crearTabEliminar() {
         JPanel panel = new JPanel(new BorderLayout(0, 18));
         panel.setOpaque(false);
@@ -503,9 +488,6 @@ public class presupuestoDetalleFrame extends JPanel {
             Estilo.mostrarError(this, "No se pudo eliminar el detalle. Revisa la consola para ver el detalle.");
         }
     }
-
-
-    // ---------- Utilidades ----------
 
     private void refrescarListaSiHayCargada() {
         if (txtIdPresupuestoListar != null && !txtIdPresupuestoListar.getText().trim().isEmpty()) {

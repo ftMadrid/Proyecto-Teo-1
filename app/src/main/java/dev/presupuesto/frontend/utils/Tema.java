@@ -44,20 +44,20 @@ public final class Tema {
     }
  
     private static final Paleta CLARO = new Paleta(
-            new Color(235, 238, 242),   // fondo principal
-            new Color(255, 255, 255),   // fondo tarjeta
-            new Color(40, 40, 40),      // texto primario
-            new Color(120, 120, 120),   // texto secundario
-            new Color(220, 225, 230),   // borde
-            new Color(0, 110, 255),     // botón / acento
-            new Color(0, 90, 215),      // botón hover
-            new Color(230, 240, 255),   // acento suave
-            new Color(248, 250, 252),   // input
-            new Color(210, 215, 220),   // borde input
-            new Color(214, 48, 49),     // peligro
-            new Color(184, 36, 37),     // peligro hover
-            new Color(245, 247, 250),   // fondo consola
-            new Color(0, 0, 0)          // texto consola
+            new Color(235, 238, 242),
+            new Color(255, 255, 255),
+            new Color(40, 40, 40),
+            new Color(120, 120, 120),
+            new Color(220, 225, 230),
+            new Color(0, 110, 255),
+            new Color(0, 90, 215),
+            new Color(230, 240, 255),
+            new Color(248, 250, 252),
+            new Color(210, 215, 220),
+            new Color(214, 48, 49),
+            new Color(184, 36, 37),
+            new Color(245, 247, 250),
+            new Color(0, 0, 0)
     );
  
     private static final Paleta OSCURO = new Paleta(
@@ -69,12 +69,12 @@ public final class Tema {
             new Color(64, 145, 255),
             new Color(110, 170, 255),
             new Color(38, 58, 92),
-            new Color(28, 30, 36),      // input oscuro
-            new Color(75, 80, 92),      // borde input oscuro
-            new Color(235, 77, 75),     // peligro oscuro
-            new Color(205, 57, 55),     // peligro hover oscuro
-            new Color(45, 49, 58),      // fondo consola (mas claro que fondo tarjeta)
-            new Color(255, 255, 255)    // texto consola (blanco puro)
+            new Color(28, 30, 36),
+            new Color(75, 80, 92),
+            new Color(235, 77, 75),
+            new Color(205, 57, 55),
+            new Color(45, 49, 58),
+            new Color(255, 255, 255)
     );
  
     private static final String CLAVE_OSCURO = "modoOscuro";

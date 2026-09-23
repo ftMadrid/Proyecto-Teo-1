@@ -60,7 +60,6 @@ public class reporteDistribucionGastosFrame extends JPanel {
                 BorderFactory.createEmptyBorder(20, 24, 20, 24)
         ));
 
-        // Filtros Superiores
         JPanel panelFiltros = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 0));
         panelFiltros.setOpaque(false);
 
@@ -93,7 +92,6 @@ public class reporteDistribucionGastosFrame extends JPanel {
 
         panelFiltros.add(contenedorBoton);
 
-        // Tabla de Resultados
         String[] columnas = {"Categoría", "Monto gastado", "Transacciones", "% del total"};
         modeloTabla = new DefaultTableModel(columnas, 0) {
             @Override public boolean isCellEditable(int row, int column) { return false; }
@@ -139,7 +137,6 @@ public class reporteDistribucionGastosFrame extends JPanel {
 
         modeloTabla.setRowCount(0);
         
-        // Aquí pasamos el ID que escribiste en la caja de texto directamente a la consulta
         ArrayList<String[]> datos = rp.reporteDistribucionGastos(idUsuario, mes, anio);
 
         if (datos != null && !datos.isEmpty()) {
@@ -194,7 +191,6 @@ public class reporteDistribucionGastosFrame extends JPanel {
                 document.open();
 
                 document.add(new Paragraph("Reporte 2: Distribución de Gastos por Categoría"));
-                // Reflejamos el usuario que escribiste a mano en el PDF
                 document.add(new Paragraph("Generado para ID Usuario: " + txtIdUsuario.getText().trim()));
                 document.add(new Paragraph("Periodo: " + txtMes.getText() + "/" + txtAnio.getText()));
                 document.add(new Paragraph(" "));

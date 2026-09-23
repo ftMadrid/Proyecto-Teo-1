@@ -7,6 +7,7 @@ import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
 
+import dev.presupuesto.backend.operaciones.Funciones;
 import dev.presupuesto.conexiones.ConexionDB;
 
 public class CrudObligacionFija {
@@ -87,6 +88,11 @@ public class CrudObligacionFija {
             ResultSet rs = cs.executeQuery();
             
             if(rs.next()){
+                Funciones fn = new Funciones();
+                
+                int dias = fn.diasHastaVencimiento(idObligacion);
+                String alertaDias = (dias == 0) ? "¡Vence hoy o ya venció!" : dias + " días";
+
                 resultado = "ID Obligación: " + rs.getString("id_obligacion") + "\n" +
                             "ID Subcategoría: " + rs.getString("id_subcategoria") + "\n" +
                             "Obligacion: " + rs.getString("nombre") + "\n" +
@@ -94,6 +100,7 @@ public class CrudObligacionFija {
                             "Subcategoría: " + rs.getString("nombre_subcategoria") + "\n" +
                             "Monto: L." + rs.getDouble("monto_mensual") + "\n" +
                             "Vence dia: " + rs.getInt("dia_vencimiento") + "\n" +
+                            "Días para vencer: " + alertaDias + "\n" +
                             "Fecha Inicio: " + rs.getTimestamp("fecha_inicio") + "\n" +
                             "Fecha Fin: " + rs.getTimestamp("fecha_finalizacion") + "\n" +
                             "Modificado por: " + rs.getString("modificado_por");

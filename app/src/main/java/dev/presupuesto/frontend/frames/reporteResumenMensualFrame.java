@@ -63,7 +63,6 @@ public class reporteResumenMensualFrame extends JPanel {
         JPanel panelFiltros = new JPanel(new BorderLayout());
         panelFiltros.setOpaque(false);
 
-        // Lado izquierdo: Campos (anchos reducidos para que quepan todos)
         JPanel panelCampos = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
         panelCampos.setOpaque(false);
 
@@ -82,7 +81,6 @@ public class reporteResumenMensualFrame extends JPanel {
         panelCampos.add(Estilo.crearGrupo("Desde (AAAA-MM-DD)", txtFechaInicio));
         panelCampos.add(Estilo.crearGrupo("Hasta (AAAA-MM-DD)", txtFechaFin));
 
-        // Lado derecho: Botones (más delgados y texto corto)
         JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         panelBotones.setOpaque(false);
         panelBotones.setBorder(BorderFactory.createEmptyBorder(22, 0, 0, 0));
@@ -100,7 +98,6 @@ public class reporteResumenMensualFrame extends JPanel {
         panelFiltros.add(panelCampos, BorderLayout.CENTER);
         panelFiltros.add(panelBotones, BorderLayout.EAST);
 
-        // Tabla de Resultados
         String[] columnas = {"Mes / Año", "Total Ingresos", "Total Gastos", "Balance Final"};
         modeloTabla = new DefaultTableModel(columnas, 0) {
             @Override public boolean isCellEditable(int row, int column) { return false; }
@@ -142,7 +139,6 @@ public class reporteResumenMensualFrame extends JPanel {
 
         modeloTabla.setRowCount(0);
         
-        // Pasamos el ID del usuario directamente desde la caja de texto
         ArrayList<String> datos = rp.reporteResumenMensual(idUsuario, fechaInicio, fechaFin);
 
         if (datos != null && !datos.isEmpty()) {
@@ -189,7 +185,6 @@ public class reporteResumenMensualFrame extends JPanel {
 
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Guardar Reporte PDF");
-        // Actualizamos el nombre del PDF
         fileChooser.setSelectedFile(new File("Reporte_Mensual_" + txtIdUsuario.getText().trim() + ".pdf"));
         if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
@@ -199,7 +194,6 @@ public class reporteResumenMensualFrame extends JPanel {
                 document.open();
 
                 document.add(new Paragraph("Reporte 1: Resumen Mensual de Ingresos vs Gastos"));
-                // Actualizamos el ID del usuario en el texto del PDF
                 document.add(new Paragraph("Generado para ID Usuario: " + txtIdUsuario.getText().trim()));
                 document.add(new Paragraph("Periodo: " + txtFechaInicio.getText() + " a " + txtFechaFin.getText()));
                 document.add(new Paragraph(" "));

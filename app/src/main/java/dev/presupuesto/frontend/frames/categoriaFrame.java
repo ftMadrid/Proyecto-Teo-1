@@ -36,7 +36,6 @@ public class categoriaFrame extends JPanel {
     private DefaultTableModel modeloListar;
     private JTable tablaListar;
 
-    // Se eliminó el txtIdCategoriaInsertar de aquí
     private JTextField txtNombreInsertar, txtDescripcionInsertar, txtTipoCategoriaInsertar, txtOrdenInsertar;
     private JTextField txtIdCategoriaActualizar, txtNombreActualizar, txtDescripcionActualizar, txtTipoCategoriaActualizar, txtOrdenActualizar;
     private JTextField txtIdEliminar;

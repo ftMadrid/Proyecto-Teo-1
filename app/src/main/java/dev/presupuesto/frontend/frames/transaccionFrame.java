@@ -36,7 +36,6 @@ public class transaccionFrame extends JPanel {
     private DefaultTableModel modeloListar;
     private JTable tablaListar;
 
-    // Se eliminó txtIdtransaccionInsertar de la lista de inserción
     private JTextField txtIdusuarioInsertar, txtIdpresupuestoInsertar, txtAnioInsertar, txtMesInsertar, txtIdsubcategoriaInsertar, txtIdobligacionInsertar, txtTipotransaccionInsertar, txtDescripcionInsertar, txtMontoInsertar, txtFechaInsertar, txtMetodopagoInsertar, txtNumerofacturaInsertar, txtObservacionesInsertar;
     private JTextField txtIdtransaccionActualizar, txtIdsubcategoriaActualizar, txtTipotransaccionActualizar, txtDescripcionActualizar, txtMontoActualizar, txtFechaActualizar, txtMetodopagoActualizar, txtNumerofacturaActualizar, txtObservacionesActualizar;
     private JTextField txtIdEliminar;
@@ -267,7 +266,7 @@ public class transaccionFrame extends JPanel {
         form.add(Estilo.crearGrupo("Observaciones", txtObservacionesInsertar));
         form.add(Estilo.crearGrupo("ID Obligación (Opcional)", txtIdobligacionInsertar));
         form.add(Estilo.crearGrupo("No. Factura (Opcional)", txtNumerofacturaInsertar));
-        form.add(new JLabel()); // Relleno para balancear la cuadrícula de 7x2
+        form.add(new JLabel());
 
         JPanel botones = crearBotonera(
                 Estilo.botonPrimario("Guardar transacción", this::insertar),
@@ -280,14 +279,25 @@ public class transaccionFrame extends JPanel {
 
     private void insertar() {
         try {
-            if (txtIdpresupuestoInsertar.getText().trim().isEmpty()) {
-                Estilo.mostrarAviso(this, "Revisa los campos obligatorios antes de continuar.");
+            String idPresupuesto = txtIdpresupuestoInsertar.getText().trim();
+            String fecha = txtFechaInsertar.getText().trim();
+
+            if (idPresupuesto.isEmpty() || fecha.isEmpty()) {
+                Estilo.mostrarAviso(this, "Revisa los campos obligatorios antes de continuar (Presupuesto y Fecha).");
                 return;
+            }
+
+            dev.presupuesto.backend.operaciones.Funciones fn = new dev.presupuesto.backend.operaciones.Funciones();
+
+            boolean presupuestoVigente = fn.validarVigenciaPresupuesto(fecha, idPresupuesto);
+
+            if (!presupuestoVigente) {
+                Estilo.mostrarAviso(this, "Aviso: La fecha de esta transacción no entra en la vigencia del presupuesto seleccionado.");
             }
 
             boolean res = crud.insertarTransaccion(
                 txtIdusuarioInsertar.getText().trim(),
-                txtIdpresupuestoInsertar.getText().trim(),
+                idPresupuesto,
                 Integer.parseInt(txtAnioInsertar.getText().trim()),
                 Integer.parseInt(txtMesInsertar.getText().trim()),
                 txtIdsubcategoriaInsertar.getText().trim(),
@@ -295,7 +305,7 @@ public class transaccionFrame extends JPanel {
                 txtTipotransaccionInsertar.getText().trim(),
                 txtDescripcionInsertar.getText().trim(),
                 Double.parseDouble(txtMontoInsertar.getText().trim()),
-                txtFechaInsertar.getText().trim(),
+                fecha,
                 txtMetodopagoInsertar.getText().trim(),
                 txtNumerofacturaInsertar.getText().trim().isEmpty() ? null : txtNumerofacturaInsertar.getText().trim(),
                 txtObservacionesInsertar.getText().trim().isEmpty() ? null : txtObservacionesInsertar.getText().trim(),
@@ -397,7 +407,7 @@ public class transaccionFrame extends JPanel {
             String tipo = lineas[1].substring("Tipo: ".length());
             String monto = lineas[2].substring("Monto: L. ".length());
             String fechaCompleta = lineas[3].substring("Fecha: ".length());
-            String fecha = fechaCompleta.split(" ")[0]; // AAAA-MM-DD
+            String fecha = fechaCompleta.split(" ")[0];
             String idSubcategoria = lineas[6].substring("ID Subcategoria: ".length());
             String metodoPago = lineas[7].substring("Metodo Pago: ".length());
             String descripcion = lineas[8].substring("Descripcion: ".length());

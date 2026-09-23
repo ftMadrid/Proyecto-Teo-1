@@ -287,7 +287,7 @@ public class subcategoriaFrame extends JPanel {
         form.add(Estilo.crearGrupo("ID Categoría", txtIdCategoriaInsertar));
         form.add(Estilo.crearGrupo("Nombre", txtNombreInsertar));
         form.add(Estilo.crearGrupo("Descripción", txtDescripcionInsertar));
-        form.add(new JLabel()); // Relleno para que la cuadrícula no se descuadre
+        form.add(new JLabel());
 
         JPanel botones = crearBotonera(
                 Estilo.botonPrimario("Guardar", this::insertar),

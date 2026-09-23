@@ -16,7 +16,7 @@ public class reporteriaFrame extends JPanel {
     private static final String CARD_MENU = "MenuReportes";
     private static final String CARD_RESUMEN = "Resumen";
     private static final String CARD_DISTRIBUCION = "Distribucion";
-    private static final String CARD_CUMPLIMIENTO = "Cumplimiento";
+    private static final String CARD_CUMPLIMIENTO = "Ejecucion";
     private static final String CARD_OBLIGACIONES = "Obligaciones";
 
     private enum IconoReporte {
@@ -40,14 +40,8 @@ public class reporteriaFrame extends JPanel {
         panelReportes.add(crearMenuReportes(), CARD_MENU);
         panelReportes.add(new reporteResumenMensualFrame(this), CARD_RESUMEN);
         panelReportes.add(new reporteDistribucionGastosFrame(this), CARD_DISTRIBUCION);
-        panelReportes.add(new reportePendienteFrame(this,
-                "Reporte 3: Análisis de Cumplimiento de Presupuesto por Categoría y Subcategoría",
-                "Comparar el presupuesto asignado vs el monto realmente gastado a nivel de categoría y subcategoría, identificando desviaciones."),
-                CARD_CUMPLIMIENTO);
-        panelReportes.add(new reportePendienteFrame(this,
-                "Reporte 4: Estado de Obligaciones Fijas y Cumplimiento de Pagos",
-                "Monitorear el cumplimiento de pago de las obligaciones fijas mensuales."),
-                CARD_OBLIGACIONES);
+        panelReportes.add(new reporteEjecucionFrame(this), CARD_CUMPLIMIENTO);
+        panelReportes.add(new reporteObligacionesFrame(this), CARD_OBLIGACIONES);
 
         add(panelReportes, BorderLayout.CENTER);
         cardReportes.show(panelReportes, CARD_MENU);
@@ -57,7 +51,6 @@ public class reporteriaFrame extends JPanel {
         return ventanaPrincipal;
     }
 
-    // Punto de entrada público para que los sub-frames regresen al menú de reportes
     public void volverAlMenu() {
         cardReportes.show(panelReportes, CARD_MENU);
     }
@@ -65,7 +58,6 @@ public class reporteriaFrame extends JPanel {
     private void mostrarReporte(String card) {
         cardReportes.show(panelReportes, card);
     }
-
 
     private JPanel crearMenuReportes() {
         JPanel panel = new JPanel(new BorderLayout());
@@ -112,9 +104,6 @@ public class reporteriaFrame extends JPanel {
     private TarjetaReporte crearTarjeta(String titulo, String descripcion, IconoReporte icono, String card) {
         return new TarjetaReporte(titulo, descripcion, icono, () -> mostrarReporte(card));
     }
-
-
-    // ---------- Tarjeta visual (mismo estilo que TarjetaModulo del hub) ----------
 
     private static class TarjetaReporte extends JPanel {
 
