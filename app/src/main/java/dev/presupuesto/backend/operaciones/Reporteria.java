@@ -3,7 +3,6 @@ package dev.presupuesto.backend.operaciones;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.Types;
 import java.util.ArrayList;
 
 import dev.presupuesto.conexiones.ConexionDB;
@@ -17,7 +16,7 @@ public class Reporteria {
         try (Connection con = ConexionDB.obtenerConexion();
              CallableStatement cs = con.prepareCall(query)) {
             
-            cs.setNull(1, Types.VARCHAR);
+            cs.setString(1, idUsuario); 
             cs.setString(2, fechaInicio);
             cs.setString(3, fechaFin);
             ResultSet rs = cs.executeQuery();

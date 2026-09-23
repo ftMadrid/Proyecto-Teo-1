@@ -30,7 +30,7 @@ public class reporteResumenMensualFrame extends JPanel {
     private Reporteria rp = new Reporteria();
     private reporteriaFrame menuReportes;
 
-    private JTextField txtFechaInicio, txtFechaFin;
+    private JTextField txtIdUsuario, txtFechaInicio, txtFechaFin;
     private DefaultTableModel modeloTabla;
     private JTable tablaReporte;
     private ChartPanel chartPanel;
@@ -60,32 +60,45 @@ public class reporteResumenMensualFrame extends JPanel {
                 BorderFactory.createEmptyBorder(20, 24, 20, 24)
         ));
 
-        // Filtros Superiores
-        JPanel panelFiltros = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 0));
+        JPanel panelFiltros = new JPanel(new BorderLayout());
         panelFiltros.setOpaque(false);
 
+        // Lado izquierdo: Campos (anchos reducidos para que quepan todos)
+        JPanel panelCampos = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
+        panelCampos.setOpaque(false);
+
+        txtIdUsuario = Estilo.crearCampo();
+        txtIdUsuario.setPreferredSize(new Dimension(100, 40));
+
         txtFechaInicio = Estilo.crearCampo();
-        txtFechaInicio.setPreferredSize(new Dimension(120, 40));
-        txtFechaInicio.setText("2024-01-01"); // Valor por defecto
+        txtFechaInicio.setPreferredSize(new Dimension(110, 40));
+        txtFechaInicio.setText("2024-01-01"); 
 
         txtFechaFin = Estilo.crearCampo();
-        txtFechaFin.setPreferredSize(new Dimension(120, 40));
-        txtFechaFin.setText("2024-12-31"); // Valor por defecto
+        txtFechaFin.setPreferredSize(new Dimension(110, 40));
+        txtFechaFin.setText("2024-12-31"); 
 
-        panelFiltros.add(Estilo.crearGrupo("Desde (AAAA-MM-DD)", txtFechaInicio));
-        panelFiltros.add(Estilo.crearGrupo("Hasta (AAAA-MM-DD)", txtFechaFin));
+        panelCampos.add(Estilo.crearGrupo("ID Usuario", txtIdUsuario));
+        panelCampos.add(Estilo.crearGrupo("Desde (AAAA-MM-DD)", txtFechaInicio));
+        panelCampos.add(Estilo.crearGrupo("Hasta (AAAA-MM-DD)", txtFechaFin));
 
-        JButton btnGenerar = Estilo.botonPrimario("Generar Reporte", this::cargarReporte);
-        btnExportar = Estilo.botonSecundario("Exportar PDF", this::exportarPDF);
+        // Lado derecho: Botones (más delgados y texto corto)
+        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
+        panelBotones.setOpaque(false);
+        panelBotones.setBorder(BorderFactory.createEmptyBorder(22, 0, 0, 0));
+
+        JButton btnGenerar = Estilo.botonPrimario("Generar", this::cargarReporte);
+        btnGenerar.setPreferredSize(new Dimension(100, 40));
+
+        btnExportar = Estilo.botonSecundario("PDF", this::exportarPDF);
+        btnExportar.setPreferredSize(new Dimension(80, 40));
         btnExportar.setEnabled(false);
 
-        JPanel contenedorBoton = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
-        contenedorBoton.setOpaque(false);
-        contenedorBoton.setBorder(BorderFactory.createEmptyBorder(22, 0, 0, 0));
-        contenedorBoton.add(btnGenerar);
-        contenedorBoton.add(btnExportar);
+        panelBotones.add(btnGenerar);
+        panelBotones.add(btnExportar);
 
-        panelFiltros.add(contenedorBoton);
+        panelFiltros.add(panelCampos, BorderLayout.CENTER);
+        panelFiltros.add(panelBotones, BorderLayout.EAST);
 
         // Tabla de Resultados
         String[] columnas = {"Mes / Año", "Total Ingresos", "Total Gastos", "Balance Final"};
@@ -113,8 +126,14 @@ public class reporteResumenMensualFrame extends JPanel {
     }
 
     private void cargarReporte() {
+        String idUsuario = txtIdUsuario.getText().trim();
         String fechaInicio = txtFechaInicio.getText().trim();
         String fechaFin = txtFechaFin.getText().trim();
+
+        if (idUsuario.isEmpty()) {
+            Estilo.mostrarAviso(this, "Por favor ingresa el ID del usuario (Ej: usr_01).");
+            return;
+        }
 
         if (fechaInicio.isEmpty() || fechaFin.isEmpty()) {
             Estilo.mostrarAviso(this, "Ingresa las fechas de inicio y fin.");
@@ -122,7 +141,9 @@ public class reporteResumenMensualFrame extends JPanel {
         }
 
         modeloTabla.setRowCount(0);
-        ArrayList<String> datos = rp.reporteResumenMensual(menuReportes.getVentanaPrincipal().getNombreCuenta(), fechaInicio, fechaFin);
+        
+        // Pasamos el ID del usuario directamente desde la caja de texto
+        ArrayList<String> datos = rp.reporteResumenMensual(idUsuario, fechaInicio, fechaFin);
 
         if (datos != null && !datos.isEmpty()) {
             DefaultCategoryDataset dataset = new DefaultCategoryDataset();
@@ -168,7 +189,8 @@ public class reporteResumenMensualFrame extends JPanel {
 
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Guardar Reporte PDF");
-        fileChooser.setSelectedFile(new File("Reporte_Mensual.pdf"));
+        // Actualizamos el nombre del PDF
+        fileChooser.setSelectedFile(new File("Reporte_Mensual_" + txtIdUsuario.getText().trim() + ".pdf"));
         if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
             try {
@@ -177,7 +199,8 @@ public class reporteResumenMensualFrame extends JPanel {
                 document.open();
 
                 document.add(new Paragraph("Reporte 1: Resumen Mensual de Ingresos vs Gastos"));
-                document.add(new Paragraph("Generado para usuario: " + menuReportes.getVentanaPrincipal().getNombreCuenta()));
+                // Actualizamos el ID del usuario en el texto del PDF
+                document.add(new Paragraph("Generado para ID Usuario: " + txtIdUsuario.getText().trim()));
                 document.add(new Paragraph("Periodo: " + txtFechaInicio.getText() + " a " + txtFechaFin.getText()));
                 document.add(new Paragraph(" "));
 
