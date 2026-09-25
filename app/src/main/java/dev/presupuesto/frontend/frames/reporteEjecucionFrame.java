@@ -155,7 +155,6 @@ public class reporteEjecucionFrame extends JPanel {
                 for (String[] fila : datos) {
                     double pres = Double.parseDouble(fila[2]);
                     double ejec = Double.parseDouble(fila[3]);
-                    double dif = Double.parseDouble(fila[4]);
                     double porc = Double.parseDouble(fila[5]);
 
                     modeloTabla.addRow(new Object[]{
